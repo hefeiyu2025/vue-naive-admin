@@ -59,8 +59,8 @@ onMounted(() => {
 
 .content {
   padding: 16px;
-  background-color: #f0f2f5;
   min-height: calc(100vh - 128px);
+  transition: opacity 0.3s ease;
 }
 
 .fade-enter-active,

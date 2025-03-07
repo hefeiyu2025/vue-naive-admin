@@ -6,10 +6,13 @@ import {
   NNotificationProvider,
   NLoadingBarProvider,
 } from 'naive-ui'
+import { useThemeStore } from '@/store/theme'
+
+const themeStore = useThemeStore()
 </script>
 
 <template>
-  <n-config-provider>
+  <n-config-provider :theme="themeStore.theme">
     <n-message-provider>
       <n-dialog-provider>
         <n-notification-provider>
@@ -22,17 +25,21 @@ import {
   </n-config-provider>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<style>
+html {
+  font-size: 16px;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+#app {
+  width: 100%;
+  height: 100vh;
 }
 </style>

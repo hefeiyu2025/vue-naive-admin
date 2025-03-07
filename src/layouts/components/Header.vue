@@ -95,11 +95,13 @@ const themeStore = useThemeStore()
 const userStore = useUserStore()
 const menuStore = useMenuStore()
 
+// 是否暗色主题
+const isDark = computed(() => themeStore.isDark)
+
 // 全屏
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen()
 
 // 主题
-const isDark = computed(() => themeStore.isDark)
 const toggleTheme = () => themeStore.toggleTheme()
 
 // 面包屑
@@ -153,6 +155,7 @@ const toggleCollapse = () => {
   display: flex;
   align-items: center;
   gap: 16px;
+  transition: opacity 0.3s ease;
 }
 
 .toolbar {

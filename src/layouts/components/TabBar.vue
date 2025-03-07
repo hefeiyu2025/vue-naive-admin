@@ -23,18 +23,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted } from 'vue'
+import { defineComponent, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTabStore } from '@/store/tab'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
+import { NTabs, NTab } from 'naive-ui'
+
+interface Tab {
+  key: string
+  label: string
+  closable?: boolean
+}
 
 const router = useRouter()
 const route = useRoute()
 const tabStore = useTabStore()
 
 // 标签页
-const activeTab = computed(() => route.path)
-const tabOptions = computed(() => tabStore.tabs)
+const activeTab = computed<string>(() => route.path)
+const tabOptions = computed<Tab[]>(() => tabStore.tabs)
 
 // 添加标签页
 const addTab = (route: RouteLocationNormalizedLoaded) => {
@@ -80,13 +87,15 @@ const handleTabClose = (key: string) => {
   }
   tabStore.removeTab(key)
 }
+
+defineComponent({
+  name: 'TabBar'
+})
 </script>
 
 <style scoped>
 .tab-bar {
   padding: 8px 16px;
-  background-color: #fff;
-  border-bottom: 1px solid #f0f0f0;
 }
 
 :deep(.n-tabs-nav) {
