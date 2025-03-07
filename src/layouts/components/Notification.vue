@@ -88,7 +88,7 @@ const fetchNotifications = async () => {
       page: 1,
       pageSize: 10,
     })
-    notifications.value = res.data.list
+    notifications.value = res.data
   }
   catch (error: any) {
     message.error(error.message || '获取通知失败')

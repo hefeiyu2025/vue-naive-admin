@@ -268,8 +268,9 @@ const fetchNotifications = async () => {
       startTime: dateRange.value?.[0],
       endTime: dateRange.value?.[1],
     })
-    notifications.value = res.data.list
-    total.value = res.data.total
+  
+    notifications.value = res.data
+    total.value = res.total
   }
   catch (error: any) {
     message.error(error.message || '获取通知失败')
