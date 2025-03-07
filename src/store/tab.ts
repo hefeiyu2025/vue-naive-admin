@@ -18,7 +18,7 @@ const getSavedTabs = (): Tab[] => {
       return [
         {
           key: '/dashboard',
-          label: '仪表盘',
+          label: 'common.home',
           closable: false,
         },
       ]
@@ -27,7 +27,7 @@ const getSavedTabs = (): Tab[] => {
   return [
     {
       key: '/dashboard',
-      label: '仪表盘',
+      label: 'common.home',
       closable: false,
     },
   ]

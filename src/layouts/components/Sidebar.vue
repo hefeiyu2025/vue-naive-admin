@@ -32,6 +32,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMenuStore } from '@/store/menu'
+import { useI18n } from 'vue-i18n'
 import {
   GridOutline,
   PersonOutline,
@@ -42,6 +43,7 @@ import {
 
 const router = useRouter()
 const menuStore = useMenuStore()
+const { t } = useI18n()
 
 // 侧边栏折叠状态
 const collapsed = ref(false)
@@ -56,7 +58,20 @@ const handleExpand = () => {
 }
 
 // 菜单
-const menuOptions = computed(() => menuStore.menuOptions)
+const menuOptions = computed(() => {
+  const processMenuOption = (option: any) => {
+    const newOption = { ...option }
+    if (typeof option.label === 'string') {
+      newOption.label = () => t(option.label)
+    }
+    if (option.children) {
+      newOption.children = option.children.map(processMenuOption)
+    }
+    return newOption
+  }
+
+  return menuStore.menuOptions.map(processMenuOption)
+})
 const activeKey = computed(() => menuStore.activeKey)
 const handleMenuClick = (key: string) => {
   menuStore.setActiveKey(key)

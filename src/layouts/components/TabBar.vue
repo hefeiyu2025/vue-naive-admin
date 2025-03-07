@@ -9,15 +9,15 @@
       justify-content="start"
       size="medium"
       closable
+      class="custom-tabs"
     >
       <n-tab
         v-for="tab in tabOptions"
         :key="tab.key"
         :name="tab.key"
         :closable="tab.closable"
-      >
-        {{ tab.label }}
-      </n-tab>
+        :label="t(tab.label)"
+      />
     </n-tabs>
   </div>
 </template>
@@ -26,6 +26,7 @@
 import { defineComponent, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTabStore } from '@/store/tab'
+import { useI18n } from 'vue-i18n'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { NTabs, NTab } from 'naive-ui'
 
@@ -38,6 +39,7 @@ interface Tab {
 const router = useRouter()
 const route = useRoute()
 const tabStore = useTabStore()
+const { t } = useI18n()
 
 // 标签页
 const activeTab = computed<string>(() => route.path)
@@ -95,18 +97,62 @@ defineComponent({
 
 <style scoped>
 .tab-bar {
-  padding: 8px 16px;
+  padding: 6px 16px 0;
+  background-color: var(--card-color);
 }
 
-:deep(.n-tabs-nav) {
-  padding: 0 16px;
-}
+:deep(.custom-tabs) {
+  .n-tabs-nav {
+    padding: 0;
+  }
 
-:deep(.n-tabs-tab) {
-  padding: 0 16px;
-}
+  .n-tabs-tab {
+    padding: 0 16px;
+    height: 32px;
+    font-size: 13px;
+    border: none;
+    background-color: transparent;
+    transition: all 0.3s ease;
+    margin-right: 2px;
+    border-radius: 4px 4px 0 0;
 
-:deep(.n-tabs-tab-pad) {
-  width: 16px;
+    &:hover {
+      background-color: var(--hover-color);
+    }
+
+    &.n-tabs-tab--active {
+      background-color: var(--primary-color);
+      color: #fff;
+
+      .n-tabs-tab__close {
+        color: #fff;
+      }
+    }
+  }
+
+  .n-tabs-tab-pad {
+    width: 16px;
+  }
+
+  .n-tabs-nav-scroll-content {
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .n-tabs-tab__close {
+    color: var(--text-color-3);
+    transition: color 0.3s ease;
+    margin-left: 4px;
+    font-size: 12px;
+
+    &:hover {
+      color: var(--error-color);
+    }
+  }
+
+  .n-tabs-nav-scroll-content {
+    &::after {
+      display: none;
+    }
+  }
 }
 </style> 

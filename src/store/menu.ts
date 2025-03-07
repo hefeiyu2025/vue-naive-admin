@@ -24,81 +24,82 @@ export const useMenuStore = defineStore('menu', {
     activeKey: '/dashboard',
     menuOptions: [
       {
-        label: '仪表盘',
+        label: 'common.dashboard',
         key: '/dashboard',
         icon: renderIcon(DashboardOutlined),
         children: [
           {
-            label: '系统概览',
+            label: 'dashboard.overview',
             key: '/dashboard/overview',
           },
           {
-            label: '工作台',
+            label: 'dashboard.workplace',
             key: '/dashboard/workplace',
           },
         ],
       },
       {
-        label: '系统管理',
+        label: 'common.system',
         key: '/system',
         icon: renderIcon(SettingOutlined),
         children: [
           {
-            label: '用户管理',
+            label: 'common.user',
             key: '/system/user',
           },
           {
-            label: '角色管理',
+            label: 'common.role',
             key: '/system/role',
           },
           {
-            label: '权限管理',
+            label: 'common.permission',
             key: '/system/permission',
           },
         ],
       },
       {
-        label: '用户中心',
+        label: 'common.profile',
         key: '/user',
         icon: renderIcon(TeamOutlined),
         children: [
           {
-            label: '个人中心',
+            label: 'common.profile',
             key: '/user/profile',
           },
           {
-            label: '消息中心',
+            label: 'common.notification',
             key: '/user/message',
           },
         ],
       },
       {
-        label: '内容管理',
+        label: 'content.title',
         key: '/content',
         icon: renderIcon(FileTextOutlined),
         children: [
           {
-            label: '文章管理',
+            label: 'content.article',
             key: '/content/article',
           },
           {
-            label: '分类管理',
+            label: 'content.category',
             key: '/content/category',
           },
           {
-            label: '标签管理',
+            label: 'content.tag',
             key: '/content/tag',
           },
         ],
       },
     ] as MenuOption[],
   }),
+
   getters: {
-    breadcrumbs(): Breadcrumb[] {
+    breadcrumbs: (state): Breadcrumb[] => {
       const breadcrumbs: Breadcrumb[] = []
-      const findPath = (options: MenuOption[], key: string) => {
+      const findBreadcrumb = (options: MenuOption[], path: string) => {
         for (const option of options) {
-          if (option.key === key) {
+          if (option.key === path) {
             breadcrumbs.push({
               title: option.label as string,
               path: option.key as string,
@@ -106,8 +107,7 @@ export const useMenuStore = defineStore('menu', {
             return true
           }
           if (option.children) {
-            const found = findPath(option.children, key)
-            if (found) {
+            if (findBreadcrumb(option.children, path)) {
               breadcrumbs.unshift({
                 title: option.label as string,
                 path: option.key as string,
@@ -118,10 +118,11 @@ export const useMenuStore = defineStore('menu', {
         }
         return false
       }
-      findPath(this.menuOptions, this.activeKey)
+      findBreadcrumb(state.menuOptions, state.activeKey)
       return breadcrumbs
     },
   },
+
   actions: {
     setActiveKey(key: string) {
       this.activeKey = key

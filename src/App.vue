@@ -5,14 +5,33 @@ import {
   NDialogProvider,
   NNotificationProvider,
   NLoadingBarProvider,
+  zhCN,
+  enUS
 } from 'naive-ui'
 import { useThemeStore } from '@/store/theme'
+import { useLanguageStore } from '@/store/language'
+import { watch } from 'vue'
+import i18n from '@/locales'
 
 const themeStore = useThemeStore()
+const languageStore = useLanguageStore()
+
+// 初始化语言
+i18n.global.locale.value = languageStore.currentLanguage
+document.documentElement.lang = languageStore.currentLanguage
+
+// 监听语言变化
+watch(
+  () => languageStore.currentLanguage,
+  (newLang) => {
+    i18n.global.locale.value = newLang
+    document.documentElement.lang = newLang
+  }
+)
 </script>
 
 <template>
-  <n-config-provider :theme="themeStore.theme">
+  <n-config-provider :theme="themeStore.theme" :locale="languageStore.currentLanguage === 'zh-CN' ? zhCN : enUS">
     <n-message-provider>
       <n-dialog-provider>
         <n-notification-provider>

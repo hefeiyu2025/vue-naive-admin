@@ -6,7 +6,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: 'Login',
     component: () => import('@/views/login/index.vue'),
     meta: {
-      title: '登录',
+      title: 'login.title',
       hidden: true,
     },
   },
@@ -21,7 +21,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index.vue'),
         meta: {
-          title: '仪表盘',
+          title: 'common.home',
           icon: 'dashboard',
           affix: true,
         },
@@ -31,7 +31,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Notification',
         component: () => import('@/views/notification/index.vue'),
         meta: {
-          title: '通知列表',
+          title: 'common.notification',
           icon: 'notifications-outline',
           requiresAuth: true,
         },
@@ -41,7 +41,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Profile',
         component: () => import('@/views/profile/index.vue'),
         meta: {
-          title: '个人中心',
+          title: 'common.profile',
           hidden: true,
         },
       },
@@ -50,7 +50,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Password',
         component: () => import('@/views/password/index.vue'),
         meta: {
-          title: '修改密码',
+          title: 'common.password',
           icon: 'i-carbon:password',
         },
       },
@@ -62,7 +62,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: () => import('@/layouts/BasicLayout.vue'),
     redirect: '/system/user',
     meta: {
-      title: '系统管理',
+      title: 'common.system',
       icon: 'setting',
     },
     children: [
@@ -71,7 +71,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'User',
         component: () => import('@/views/system/user/index.vue'),
         meta: {
-          title: '用户管理',
+          title: 'common.user',
           icon: 'user',
         },
       },
@@ -80,7 +80,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Role',
         component: () => import('@/views/system/role/index.vue'),
         meta: {
-          title: '角色管理',
+          title: 'common.role',
           icon: 'role',
         },
       },
@@ -89,7 +89,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Permission',
         component: () => import('@/views/system/permission/index.vue'),
         meta: {
-          title: '权限管理',
+          title: 'common.permission',
           icon: 'permission',
         },
       },

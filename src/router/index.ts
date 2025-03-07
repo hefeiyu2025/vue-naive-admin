@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { useUserStore, usePermissionStore } from '@/store'
 import { getUserInfo } from '@/api/user'
 import constantRoutes from './routes'
+import i18n from '@/locales'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -18,7 +19,8 @@ router.beforeEach(async (to, from, next) => {
   const permissionStore = usePermissionStore()
 
   // 设置页面标题
-  document.title = `${to.meta.title || ''} - Vue Naive Admin`
+  const title = to.meta.title as string
+  document.title = title ? `${i18n.global.t(title)} - Vue Naive Admin` : 'Vue Naive Admin'
 
   if (userStore.isLogin) {
     if (to.path === '/login') {

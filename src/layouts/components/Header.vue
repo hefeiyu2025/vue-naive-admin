@@ -14,7 +14,7 @@
       <!-- 面包屑 -->
       <n-breadcrumb>
         <n-breadcrumb-item v-for="item in breadcrumbs" :key="item.path">
-          {{ item.title }}
+          {{ t(item.title) }}
         </n-breadcrumb-item>
       </n-breadcrumb>
 
@@ -50,6 +50,20 @@
           </template>
         </n-button>
 
+        <!-- 语言切换 -->
+        <n-button quaternary circle class="lang-button" @click="toggleLanguage">
+          <template #icon>
+            <div class="language-switch">
+              <n-icon size="18">
+                <EarthOutline />
+              </n-icon>
+              <span class="lang-text" :class="{ 'active': languageStore.currentLanguage === 'zh-CN' }">中</span>
+              <span class="divider">/</span>
+              <span class="lang-text" :class="{ 'active': languageStore.currentLanguage === 'en-US' }">En</span>
+            </div>
+          </template>
+        </n-button>
+
         <!-- 用户信息 -->
         <n-dropdown :options="userOptions" @select="handleUserSelect" trigger="click">
           <n-space align="center">
@@ -71,6 +85,7 @@
 import { computed, h } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMessage } from 'naive-ui'
+import { useI18n } from 'vue-i18n'
 import {
   MenuOutline,
   SearchOutline,
@@ -78,12 +93,14 @@ import {
   ScanOutline,
   ExpandOutline,
   SunnyOutline,
-  MoonOutline
+  MoonOutline,
+  EarthOutline
 } from '@vicons/ionicons5'
 import { useFullscreen } from '@vueuse/core'
 import { useThemeStore } from '@/store/theme'
 import { useUserStore } from '@/store'
 import { useMenuStore } from '@/store/menu'
+import { useLanguageStore } from '@/store/language'
 import defaultAvatar from '@/assets/default-avatar.svg'
 import Notification from './Notification.vue'
 
@@ -97,9 +114,11 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const message = useMessage()
+const { t } = useI18n()
 const themeStore = useThemeStore()
 const userStore = useUserStore()
 const menuStore = useMenuStore()
+const languageStore = useLanguageStore()
 
 // 是否暗色主题
 const isDark = computed(() => themeStore.isDark)
@@ -110,18 +129,25 @@ const { isFullscreen, toggle: toggleFullscreen } = useFullscreen()
 // 主题
 const toggleTheme = () => themeStore.toggleTheme()
 
+// 语言切换
+const toggleLanguage = () => {
+  const newLang = languageStore.currentLanguage === 'zh-CN' ? 'en-US' : 'zh-CN'
+  languageStore.setLanguage(newLang)
+  message.success(newLang === 'zh-CN' ? '已切换到中文' : 'Switched to English')
+}
+
 // 面包屑
 const breadcrumbs = computed(() => menuStore.breadcrumbs)
 
 // 用户菜单
 const userOptions = [
   {
-    label: '个人中心',
+    label: () => t('common.profile'),
     key: 'profile',
     icon: () => h('i', { class: 'i-carbon:user-avatar' })
   },
   {
-    label: '修改密码',
+    label: () => t('common.password'),
     key: 'password',
     icon: () => h('i', { class: 'i-carbon:password' })
   },
@@ -129,7 +155,7 @@ const userOptions = [
     type: 'divider',
   },
   {
-    label: '退出登录',
+    label: () => t('common.logout'),
     key: 'logout',
     icon: () => h('i', { class: 'i-carbon:logout' })
   },
@@ -147,7 +173,7 @@ const handleUserSelect = async (key: string) => {
     case 'logout':
       await userStore.logout()
       router.push('/login')
-      message.success('退出登录成功')
+      message.success(t('common.logout') + (languageStore.currentLanguage === 'zh-CN' ? '成功' : ' success'))
       break
   }
 }
@@ -183,5 +209,41 @@ const toggleCollapse = () => {
 .username {
   font-size: 14px;
   color: var(--text-color);
+}
+
+.lang-button {
+  width: auto !important;
+  min-width: 85px !important;
+  padding: 0 8px !important;
+}
+
+.language-switch {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  height: 32px;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+.lang-text {
+  opacity: 0.5;
+  transition: all 0.3s ease;
+  line-height: 1;
+  user-select: none;
+}
+
+.lang-text.active {
+  opacity: 1;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.divider {
+  opacity: 0.3;
+  margin: 0 2px;
+  line-height: 1;
+  user-select: none;
 }
 </style> 
