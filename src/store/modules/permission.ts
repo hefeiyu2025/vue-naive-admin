@@ -20,7 +20,7 @@ const iconMap: Record<string, any> = {
 export const usePermissionStore = defineStore('permission', {
   state: (): PermissionState => ({
     menus: [],
-    routes: [],
+    routes: []
   }),
 
   getters: {
@@ -33,53 +33,34 @@ export const usePermissionStore = defineStore('permission', {
         })
       }
       return findPermission(state.menus)
-    },
+    }
   },
 
   actions: {
     async getMenus() {
       try {
-        const menus = await getAllPermissions()
-        this.menus = menus
-        return Promise.resolve(menus)
-      }
-      catch (error) {
-        return Promise.reject(error)
+        const response = await getAllPermissions()
+        // 确保response是一个数组
+        if (Array.isArray(response)) {
+          this.menus = response
+          return response
+        }
+        throw new Error('Invalid menu data')
+      } catch (error) {
+        console.error('Failed to get menus:', error)
+        throw error
       }
     },
 
     generateRoutes() {
-      const generateRoutesFromMenus = (menus: MenuPermission[]): RouteRecordRaw[] => {
-        return menus.map(menu => {
-          const route: RouteRecordRaw & { redirect?: string } = {
-            path: menu.code.toLowerCase(),
-            name: menu.code,
-            component: menu.children && menu.children.length > 0
-              ? () => import('@/layout/index.vue')
-              : () => import(`@/views/${menu.code.toLowerCase()}/index.vue`),
-            meta: {
-              title: menu.name,
-              icon: iconMap[menu.code.toLowerCase()],
-            },
-          }
-
-          if (menu.children && menu.children.length > 0) {
-            route.redirect = `${route.path}/${menu.children[0].code.toLowerCase()}`
-            route.children = generateRoutesFromMenus(menu.children)
-          }
-
-          return route
-        })
-      }
-
-      const accessRoutes = generateRoutesFromMenus(this.menus)
-      this.routes = accessRoutes
-      return accessRoutes
+      // 不再生成动态路由，直接返回空数组
+      this.routes = []
+      return []
     },
 
     resetPermission() {
       this.menus = []
       this.routes = []
-    },
-  },
+    }
+  }
 }) 

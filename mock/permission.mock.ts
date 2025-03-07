@@ -33,38 +33,40 @@ export default defineMock([
     url: '/api/permission/all',
     method: 'GET',
     body: () => {
-      return {
-        code: 0,
-        data: [
-          {
-            id: 1,
-            name: '系统管理',
-            code: 'SYSTEM',
-            type: '菜单',
-            children: [
-              {
-                id: 2,
-                name: '用户管理',
-                code: 'USER_MANAGE',
-                type: '菜单',
-              },
-              {
-                id: 3,
-                name: '角色管理',
-                code: 'ROLE_MANAGE',
-                type: '菜单',
-              },
-              {
-                id: 4,
-                name: '权限管理',
-                code: 'PERMISSION_MANAGE',
-                type: '菜单',
-              },
-            ],
-          },
-        ],
-        message: 'ok',
-      }
+      return [
+        {
+          id: 1,
+          name: '仪表盘',
+          code: 'dashboard',
+          type: 'menu',
+        },
+        {
+          id: 2,
+          name: '系统管理',
+          code: 'system',
+          type: 'menu',
+          children: [
+            {
+              id: 3,
+              name: '用户管理',
+              code: 'user',
+              type: 'menu',
+            },
+            {
+              id: 4,
+              name: '角色管理',
+              code: 'role',
+              type: 'menu',
+            },
+            {
+              id: 5,
+              name: '权限管理',
+              code: 'permission',
+              type: 'menu',
+            },
+          ],
+        },
+      ]
     },
   },
 ]) 

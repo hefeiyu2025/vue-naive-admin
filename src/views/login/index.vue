@@ -92,9 +92,11 @@ const handleSubmit = () => {
     try {
       loading.value = true
       await userStore.login(formData.value.username, formData.value.password)
+      message.success('登录成功')
+      // 延迟跳转，确保token已经保存
+      await new Promise(resolve => setTimeout(resolve, 100))
       const redirect = route.query.redirect as string
       router.push(redirect || '/')
-      message.success('登录成功')
     }
     catch (error: any) {
       message.error(error.message || '登录失败')

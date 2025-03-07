@@ -38,8 +38,8 @@
           <n-button quaternary circle @click="collapsed = !collapsed">
             <template #icon>
               <n-icon size="18">
-                <MenuFoldOutlined v-if="collapsed" />
-                <MenuUnfoldOutlined v-else />
+                <MenuOutline v-if="collapsed" />
+                <ChevronForwardOutline v-else />
               </n-icon>
             </template>
           </n-button>
@@ -56,14 +56,14 @@
             <!-- 搜索 -->
             <n-button quaternary circle>
               <template #icon>
-                <n-icon><SearchOutlined /></n-icon>
+                <n-icon><SearchOutline /></n-icon>
               </template>
             </n-button>
 
             <!-- 通知 -->
             <n-button quaternary circle>
               <template #icon>
-                <n-icon><BellOutlined /></n-icon>
+                <n-icon><NotificationsOutline /></n-icon>
               </template>
             </n-button>
 
@@ -71,8 +71,8 @@
             <n-button quaternary circle @click="toggleFullscreen">
               <template #icon>
                 <n-icon>
-                  <FullscreenOutlined v-if="!isFullscreen" />
-                  <FullscreenExitOutlined v-else />
+                  <ScanOutline v-if="!isFullscreen" />
+                  <ExpandOutline v-else />
                 </n-icon>
               </template>
             </n-button>
@@ -81,8 +81,8 @@
             <n-button quaternary circle @click="toggleTheme">
               <template #icon>
                 <n-icon>
-                  <CheckOutlined v-if="isDark" />
-                  <CloseOutlined v-else />
+                  <SunnyOutline v-if="isDark" />
+                  <MoonOutline v-else />
                 </n-icon>
               </template>
             </n-button>
@@ -122,18 +122,24 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  SearchOutlined,
-  BellOutlined,
-  FullscreenOutlined,
-  FullscreenExitOutlined,
-  CheckOutlined,
-  CloseOutlined,
-} from '@vicons/antd'
+  MenuOutline,
+  SearchOutline,
+  NotificationsOutline,
+  ChevronForwardOutline,
+  ScanOutline,
+  PersonOutline,
+  PeopleOutline,
+  KeyOutline,
+  SettingsOutline,
+  GridOutline,
+  ContractOutline,
+  ExpandOutline,
+  SunnyOutline,
+  MoonOutline
+} from '@vicons/ionicons5'
 import { useFullscreen } from '@vueuse/core'
 import { useThemeStore } from '@/store/theme'
-import { useUserStore } from '@/store/user'
+import { useUserStore } from '@/store'
 import { useMenuStore } from '@/store/menu'
 import { useTabStore } from '@/store/tab'
 
@@ -207,6 +213,15 @@ const handleTabUpdate = (key: string) => {
 }
 const handleTabClose = (key: string) => {
   tabStore.removeTab(key)
+}
+
+// 图标映射
+const iconMap: Record<string, any> = {
+  dashboard: GridOutline,
+  user: PersonOutline,
+  role: PeopleOutline,
+  permission: KeyOutline,
+  system: SettingsOutline,
 }
 </script>
 

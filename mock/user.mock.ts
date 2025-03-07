@@ -49,7 +49,7 @@ export default defineMock([
         return {
           id,
           username: `user${id}`,
-          role: id === 1 ? '管理员' : '普通用户',
+          role: id === 1 ? '管理用户' : '普通用户',
           status: true,
           createTime: '2024-03-07 12:00:00',
         }

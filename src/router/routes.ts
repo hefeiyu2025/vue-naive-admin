@@ -13,7 +13,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Layout',
-    component: () => import('@/layout/index.vue'),
+    component: () => import('@/layouts/BasicLayout.vue'),
     redirect: '/dashboard',
     children: [
       {
@@ -39,7 +39,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/system',
     name: 'System',
-    component: () => import('@/layout/index.vue'),
+    component: () => import('@/layouts/BasicLayout.vue'),
     redirect: '/system/user',
     meta: {
       title: '系统管理',
