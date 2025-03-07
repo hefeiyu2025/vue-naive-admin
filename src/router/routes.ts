@@ -23,6 +23,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         meta: {
           title: '仪表盘',
           icon: 'dashboard',
+          affix: true,
         },
       },
       {

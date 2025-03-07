@@ -6,35 +6,64 @@ interface Tab {
   closable?: boolean
 }
 
+const TABS_KEY = 'vue-naive-admin-tabs'
+
+// 从localStorage获取保存的标签页
+const getSavedTabs = (): Tab[] => {
+  const savedTabs = localStorage.getItem(TABS_KEY)
+  if (savedTabs) {
+    try {
+      return JSON.parse(savedTabs)
+    } catch (e) {
+      return [
+        {
+          key: '/dashboard',
+          label: '仪表盘',
+          closable: false,
+        },
+      ]
+    }
+  }
+  return [
+    {
+      key: '/dashboard',
+      label: '仪表盘',
+      closable: false,
+    },
+  ]
+}
+
 export const useTabStore = defineStore('tab', {
   state: () => ({
-    activeTab: '/dashboard',
-    tabs: [
-      {
-        key: '/dashboard',
-        label: '仪表盘',
-        closable: false,
-      },
-    ] as Tab[],
+    tabs: getSavedTabs(),
   }),
+
   actions: {
     addTab(tab: Tab) {
-      if (!this.tabs.find((t) => t.key === tab.key)) {
+      const existTab = this.tabs.find((t) => t.key === tab.key)
+      if (!existTab) {
         this.tabs.push(tab)
+        this.saveTabs()
       }
-      this.activeTab = tab.key
     },
+
     removeTab(key: string) {
       const index = this.tabs.findIndex((tab) => tab.key === key)
-      if (index !== -1) {
+      if (index !== -1 && key !== '/dashboard') {
         this.tabs.splice(index, 1)
-        if (this.activeTab === key) {
-          this.activeTab = this.tabs[index - 1]?.key || this.tabs[0].key
-        }
+        this.saveTabs()
       }
     },
-    setActiveTab(key: string) {
-      this.activeTab = key
+
+    // 清空所有标签（除了固定的）
+    clearTabs() {
+      this.tabs = this.tabs.filter(tab => !tab.closable)
+      this.saveTabs()
+    },
+
+    // 保存标签页到localStorage
+    saveTabs() {
+      localStorage.setItem(TABS_KEY, JSON.stringify(this.tabs))
     },
   },
 }) 
