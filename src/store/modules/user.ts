@@ -7,8 +7,12 @@ interface UserState {
   userInfo: {
     id: number
     username: string
+    nickname: string
     avatar: string
     role: string
+    email?: string
+    phone?: string
+    bio?: string
   } | null
 }
 
@@ -64,6 +68,18 @@ export const useUserStore = defineStore('user', {
         // 清除权限状态
         const permissionStore = usePermissionStore()
         permissionStore.resetPermission()
+      }
+    },
+
+    setUserInfo(userInfo: UserState['userInfo']) {
+      this.userInfo = userInfo
+    },
+
+    async updateUserInfo(data: Partial<UserState['userInfo']>) {
+      if (!this.userInfo) return
+      this.userInfo = {
+        ...this.userInfo,
+        ...data,
       }
     },
   },

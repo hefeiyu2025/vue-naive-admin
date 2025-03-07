@@ -5,9 +5,8 @@
       <!-- 折叠按钮 -->
       <n-button quaternary circle @click="toggleCollapse">
         <template #icon>
-          <n-icon size="18">
-            <MenuOutline v-if="collapsed" />
-            <ChevronForwardOutline v-else />
+          <n-icon size="18" :class="{ 'icon-rotate': collapsed }">
+            <MenuOutline />
           </n-icon>
         </template>
       </n-button>
@@ -29,11 +28,7 @@
         </n-button>
 
         <!-- 通知 -->
-        <n-button quaternary circle>
-          <template #icon>
-            <n-icon><NotificationsOutline /></n-icon>
-          </template>
-        </n-button>
+        <Notification />
 
         <!-- 全屏 -->
         <n-button quaternary circle @click="toggleFullscreen">
@@ -56,8 +51,16 @@
         </n-button>
 
         <!-- 用户信息 -->
-        <n-dropdown :options="userOptions" @select="handleUserSelect">
-          <n-avatar round size="small" src="@/assets/avatar.svg" />
+        <n-dropdown :options="userOptions" @select="handleUserSelect" trigger="click">
+          <n-space align="center">
+            <n-avatar
+              round
+              size="small"
+              :src="userStore.userInfo?.avatar"
+              :fallback-src="defaultAvatar"
+            />
+            <span class="username">{{ userStore.userInfo?.username }}</span>
+          </n-space>
         </n-dropdown>
       </div>
     </div>
@@ -65,13 +68,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, h } from 'vue'
 import { useRouter } from 'vue-router'
+import { useMessage } from 'naive-ui'
 import {
   MenuOutline,
   SearchOutline,
   NotificationsOutline,
-  ChevronForwardOutline,
   ScanOutline,
   ExpandOutline,
   SunnyOutline,
@@ -81,6 +84,8 @@ import { useFullscreen } from '@vueuse/core'
 import { useThemeStore } from '@/store/theme'
 import { useUserStore } from '@/store'
 import { useMenuStore } from '@/store/menu'
+import defaultAvatar from '@/assets/default-avatar.svg'
+import Notification from './Notification.vue'
 
 const props = defineProps<{
   collapsed: boolean
@@ -91,6 +96,7 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
+const message = useMessage()
 const themeStore = useThemeStore()
 const userStore = useUserStore()
 const menuStore = useMenuStore()
@@ -112,10 +118,12 @@ const userOptions = [
   {
     label: '个人中心',
     key: 'profile',
+    icon: () => h('i', { class: 'i-carbon:user-avatar' })
   },
   {
     label: '修改密码',
     key: 'password',
+    icon: () => h('i', { class: 'i-carbon:password' })
   },
   {
     type: 'divider',
@@ -123,11 +131,12 @@ const userOptions = [
   {
     label: '退出登录',
     key: 'logout',
+    icon: () => h('i', { class: 'i-carbon:logout' })
   },
 ]
 
 // 处理用户菜单选择
-const handleUserSelect = (key: string) => {
+const handleUserSelect = async (key: string) => {
   switch (key) {
     case 'profile':
       router.push('/profile')
@@ -136,8 +145,9 @@ const handleUserSelect = (key: string) => {
       router.push('/password')
       break
     case 'logout':
-      userStore.logout()
+      await userStore.logout()
       router.push('/login')
+      message.success('退出登录成功')
       break
   }
 }
@@ -163,5 +173,15 @@ const toggleCollapse = () => {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.icon-rotate {
+  transform: rotate(-90deg);
+  transition: transform 0.3s ease;
+}
+
+.username {
+  font-size: 14px;
+  color: var(--text-color);
 }
 </style> 

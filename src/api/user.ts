@@ -3,9 +3,14 @@ import request from '@/utils/request'
 export interface User {
   id: number
   username: string
+  nickname: string
+  avatar: string
   role: string
-  status: boolean
-  createTime: string
+  email?: string
+  phone?: string
+  bio?: string
+  status?: boolean
+  createTime?: string
 }
 
 export interface UserListResult {
@@ -66,5 +71,37 @@ export function logout() {
   return request({
     url: '/auth/logout',
     method: 'post'
+  })
+}
+
+export function updateUserInfo(data: Partial<User>) {
+  return request({
+    url: '/user/update',
+    method: 'put',
+    data
+  })
+}
+
+export function updatePassword(data: {
+  oldPassword: string
+  newPassword: string
+}) {
+  return request({
+    url: '/user/password',
+    method: 'put',
+    data
+  })
+}
+
+export function uploadAvatar(file: File) {
+  const formData = new FormData()
+  formData.append('file', file)
+  return request({
+    url: '/user/avatar',
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data: formData
   })
 } 

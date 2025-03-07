@@ -7,13 +7,13 @@
     :width="240"
     :collapsed="collapsed"
     show-trigger
-    @collapse="collapsed = true"
-    @expand="collapsed = false"
+    @collapse="handleCollapse"
+    @expand="handleExpand"
   >
     <!-- Logo -->
     <div class="logo">
       <img src="@/assets/logo.svg" alt="Logo" />
-      <h1 v-show="!collapsed">Vue Naive Admin</h1>
+      <h1 v-if="!collapsed">Vue Naive Admin</h1>
     </div>
 
     <!-- 菜单 -->
@@ -46,6 +46,15 @@ const menuStore = useMenuStore()
 // 侧边栏折叠状态
 const collapsed = ref(false)
 
+// 处理折叠状态变化
+const handleCollapse = () => {
+  collapsed.value = true
+}
+
+const handleExpand = () => {
+  collapsed.value = false
+}
+
 // 菜单
 const menuOptions = computed(() => menuStore.menuOptions)
 const activeKey = computed(() => menuStore.activeKey)
@@ -71,16 +80,20 @@ const iconMap: Record<string, any> = {
   display: flex;
   align-items: center;
   gap: 8px;
+  overflow: hidden;
 }
 
 .logo img {
   width: 32px;
   height: 32px;
+  flex-shrink: 0;
 }
 
 .logo h1 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.3s ease;
 }
 </style> 

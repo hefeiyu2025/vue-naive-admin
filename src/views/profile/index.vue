@@ -11,7 +11,20 @@
               :src="userStore.userInfo?.avatar"
               :fallback-src="defaultAvatar"
             />
-            <h2>{{ userStore.userInfo?.username }}</h2>
+            <n-upload
+              accept="image/*"
+              :max="1"
+              :show-file-list="false"
+              @change="handleAvatarUpload"
+            >
+              <n-button text>
+                <template #icon>
+                  <n-icon><camera-outline /></n-icon>
+                </template>
+                更换头像
+              </n-button>
+            </n-upload>
+            <h2>{{ userStore.userInfo?.nickname || userStore.userInfo?.username }}</h2>
             <n-tag type="success">{{ userStore.userInfo?.role }}</n-tag>
             <div class="user-stats">
               <div class="stat-item">
@@ -88,52 +101,6 @@
               </n-form>
             </n-tab-pane>
 
-            <!-- 修改密码 -->
-            <n-tab-pane name="password" tab="修改密码">
-              <n-form
-                ref="passwordFormRef"
-                :model="passwordForm"
-                :rules="passwordRules"
-                label-placement="left"
-                label-width="100"
-                require-mark-placement="right-hanging"
-              >
-                <n-form-item label="当前密码" path="oldPassword">
-                  <n-input
-                    v-model:value="passwordForm.oldPassword"
-                    type="password"
-                    show-password-on="click"
-                    placeholder="请输入当前密码"
-                  />
-                </n-form-item>
-                <n-form-item label="新密码" path="newPassword">
-                  <n-input
-                    v-model:value="passwordForm.newPassword"
-                    type="password"
-                    show-password-on="click"
-                    placeholder="请输入新密码"
-                  />
-                </n-form-item>
-                <n-form-item label="确认新密码" path="confirmPassword">
-                  <n-input
-                    v-model:value="passwordForm.confirmPassword"
-                    type="password"
-                    show-password-on="click"
-                    placeholder="请再次输入新密码"
-                  />
-                </n-form-item>
-                <n-form-item>
-                  <n-button
-                    type="primary"
-                    :loading="passwordSubmitting"
-                    @click="handlePasswordSubmit"
-                  >
-                    修改密码
-                  </n-button>
-                </n-form-item>
-              </n-form>
-            </n-tab-pane>
-
             <!-- 账号绑定 -->
             <n-tab-pane name="binding" tab="账号绑定">
               <n-list>
@@ -175,24 +142,60 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useMessage } from 'naive-ui'
-import type { FormInst } from 'naive-ui'
+import type { FormInst, UploadFileInfo } from 'naive-ui'
 import { useUserStore } from '@/store'
-import { MailOutline, PhonePortraitOutline } from '@vicons/ionicons5'
+import { MailOutline, PhonePortraitOutline, CameraOutline } from '@vicons/ionicons5'
 import defaultAvatar from '@/assets/default-avatar.svg'
+import { getUserInfo, updateUserInfo, uploadAvatar } from '@/api/user'
 
 const message = useMessage()
 const userStore = useUserStore()
+
+// 获取用户信息
+const fetchUserInfo = async () => {
+  try {
+    const { data } = await getUserInfo()
+    userStore.setUserInfo(data)
+    basicForm.value = {
+      username: data.username,
+      nickname: data.nickname || '',
+      email: data.email || '',
+      phone: data.phone || '',
+      bio: data.bio || '',
+    }
+  }
+  catch (error: any) {
+    message.error(error.message || '获取用户信息失败')
+  }
+}
+
+// 头像上传
+const handleAvatarUpload = async (data: { file: UploadFileInfo }) => {
+  try {
+    const { file } = data
+    if (!file.file) return
+    const { data: res } = await uploadAvatar(file.file)
+    userStore.setUserInfo({
+      ...userStore.userInfo!,
+      avatar: res.url,
+    })
+    message.success('头像上传成功')
+  }
+  catch (error: any) {
+    message.error(error.message || '头像上传失败')
+  }
+}
 
 // 基本信息表单
 const basicFormRef = ref<FormInst | null>(null)
 const basicSubmitting = ref(false)
 const basicForm = ref({
-  username: userStore.userInfo?.username || '',
+  username: '',
   nickname: '',
-  email: 'example@example.com',
-  phone: '13800138000',
+  email: '',
+  phone: '',
   bio: '',
 })
 
@@ -227,8 +230,11 @@ const handleBasicSubmit = () => {
 
     try {
       basicSubmitting.value = true
-      // TODO: 调用更新用户信息接口
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await updateUserInfo(basicForm.value)
+      userStore.setUserInfo({
+        ...userStore.userInfo!,
+        ...basicForm.value,
+      })
       message.success('保存成功')
     }
     catch (error: any) {
@@ -240,58 +246,10 @@ const handleBasicSubmit = () => {
   })
 }
 
-// 修改密码表单
-const passwordFormRef = ref<FormInst | null>(null)
-const passwordSubmitting = ref(false)
-const passwordForm = ref({
-  oldPassword: '',
-  newPassword: '',
-  confirmPassword: '',
+// 初始化
+onMounted(() => {
+  fetchUserInfo()
 })
-
-const passwordRules = {
-  oldPassword: [
-    { required: true, message: '请输入当前密码', trigger: 'blur' },
-  ],
-  newPassword: [
-    { required: true, message: '请输入新密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能小于6位', trigger: 'blur' },
-  ],
-  confirmPassword: [
-    { required: true, message: '请再次输入新密码', trigger: 'blur' },
-    {
-      validator: (rule: any, value: string) => {
-        return value === passwordForm.value.newPassword
-      },
-      message: '两次输入的密码不一致',
-      trigger: 'blur',
-    },
-  ],
-}
-
-const handlePasswordSubmit = () => {
-  passwordFormRef.value?.validate(async (errors) => {
-    if (errors) return
-
-    try {
-      passwordSubmitting.value = true
-      // TODO: 调用修改密码接口
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      message.success('修改成功')
-      passwordForm.value = {
-        oldPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      }
-    }
-    catch (error: any) {
-      message.error(error.message || '修改失败')
-    }
-    finally {
-      passwordSubmitting.value = false
-    }
-  })
-}
 </script>
 
 <style lang="scss" scoped>

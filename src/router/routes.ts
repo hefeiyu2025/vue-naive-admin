@@ -27,12 +27,31 @@ export const constantRoutes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'notification',
+        name: 'Notification',
+        component: () => import('@/views/notification/index.vue'),
+        meta: {
+          title: '通知列表',
+          icon: 'notifications-outline',
+          requiresAuth: true,
+        },
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('@/views/profile/index.vue'),
         meta: {
           title: '个人中心',
           hidden: true,
+        },
+      },
+      {
+        path: 'password',
+        name: 'Password',
+        component: () => import('@/views/password/index.vue'),
+        meta: {
+          title: '修改密码',
+          icon: 'i-carbon:password',
         },
       },
     ],
