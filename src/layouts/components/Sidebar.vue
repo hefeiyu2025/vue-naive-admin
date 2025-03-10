@@ -22,6 +22,7 @@
       :collapsed="collapsed"
       :collapsed-width="64"
       :collapsed-icon-size="22"
+      :indent="20"
       :options="menuOptions"
       :value="activeKey"
       @update:value="handleMenuClick"
@@ -30,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePermissionStore } from '@/store'
 import { useI18n } from 'vue-i18n'
@@ -96,6 +97,20 @@ const handleMenuClick = (key: string) => {
   })
   router.push(key)
 }
+
+// 监听路由变化，确保激活状态正确
+watch(
+  () => router.currentRoute.value.path,
+  (path) => {
+    // 如果路径变化，确保菜单项激活状态正确
+    if (path && path !== activeKey.value) {
+      import('@/store/menu').then(({ useMenuStore }) => {
+        const menuStore = useMenuStore()
+        menuStore.setActiveKey(path)
+      })
+    }
+  }
+)
 </script>
 
 <style scoped>
@@ -129,5 +144,21 @@ const handleMenuClick = (key: string) => {
   opacity: 0;
   margin: 0;
   padding: 0;
+}
+
+:deep(.n-menu-item-content) {
+  display: flex;
+  align-items: center;
+}
+
+:deep(.n-menu-item-content__icon) {
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:deep(.n-menu.n-menu--collapsed .n-menu-item-content__icon) {
+  margin-right: 0;
 }
 </style> 
