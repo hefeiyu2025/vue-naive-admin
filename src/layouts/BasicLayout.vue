@@ -78,7 +78,7 @@ onMounted(() => {
 .scrollable-content {
   flex: 1;
   overflow-y: auto;
-  height: calc(100vh - 112px); /* 减去header和tabbar的高度 */
+  height: calc(100vh - 113px); /* 减去header和tabbar的高度，预留1像素 */
 }
 
 .content {
