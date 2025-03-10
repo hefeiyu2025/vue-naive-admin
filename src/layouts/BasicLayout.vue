@@ -1,11 +1,11 @@
 <!-- 基础布局组件 -->
 <template>
-  <n-layout class="layout" has-sider>
+  <div class="layout-container">
     <!-- 侧边栏 -->
     <Sidebar v-model:collapsed="collapsed" />
 
     <!-- 主内容区 -->
-    <n-layout class="main-content">
+    <div class="main-content">
       <!-- 顶部导航栏 (固定) -->
       <div class="fixed-header">
         <Header v-model:collapsed="collapsed" />
@@ -15,7 +15,7 @@
       </div>
 
       <!-- 内容区 (可滚动) -->
-      <n-layout-content class="scrollable-content">
+      <div class="scrollable-content">
         <div class="content">
           <router-view v-slot="{ Component }">
             <transition name="fade" mode="out-in">
@@ -23,9 +23,9 @@
             </transition>
           </router-view>
         </div>
-      </n-layout-content>
-    </n-layout>
-  </n-layout>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -55,11 +55,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.layout {
+.layout-container {
+  display: flex;
   height: 100vh;
+  width: 100%;
+  overflow: hidden;
 }
 
 .main-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
   height: 100vh;
