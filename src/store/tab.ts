@@ -18,7 +18,7 @@ const getSavedTabs = (): Tab[] => {
       return [
         {
           key: '/dashboard',
-          label: 'common.home',
+          label: 'common.dashboard',
           closable: false,
         },
       ]
@@ -27,7 +27,7 @@ const getSavedTabs = (): Tab[] => {
   return [
     {
       key: '/dashboard',
-      label: 'common.home',
+      label: 'common.dashboard',
       closable: false,
     },
   ]
@@ -58,6 +58,18 @@ export const useTabStore = defineStore('tab', {
     // 清空所有标签（除了固定的）
     clearTabs() {
       this.tabs = this.tabs.filter(tab => !tab.closable)
+      this.saveTabs()
+    },
+
+    // 重置所有标签页
+    resetTabs() {
+      this.tabs = [
+        {
+          key: '/dashboard',
+          label: 'common.dashboard',
+          closable: false,
+        },
+      ]
       this.saveTabs()
     },
 

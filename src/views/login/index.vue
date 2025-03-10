@@ -61,12 +61,14 @@ import { useRouter, useRoute } from 'vue-router'
 import { useMessage } from 'naive-ui'
 import { PersonOutline, LockClosedOutline } from '@vicons/ionicons5'
 import { useUserStore } from '@/store'
+import { useTabStore } from '@/store/tab'
 import type { FormInst } from 'naive-ui'
 
 const router = useRouter()
 const route = useRoute()
 const message = useMessage()
 const userStore = useUserStore()
+const tabStore = useTabStore()
 
 const formRef = ref<FormInst | null>(null)
 const loading = ref(false)
@@ -93,6 +95,8 @@ const handleSubmit = () => {
       loading.value = true
       await userStore.login(formData.value.username, formData.value.password)
       message.success('登录成功')
+      // 重置标签页
+      tabStore.resetTabs()
       // 延迟跳转，确保token已经保存
       await new Promise(resolve => setTimeout(resolve, 100))
       const redirect = route.query.redirect as string

@@ -3,9 +3,9 @@ export default {
     home: 'Home',
     dashboard: 'Dashboard',
     system: 'System',
-    user: 'User',
-    role: 'Role',
-    permission: 'Permission',
+    user: 'Users',
+    role: 'Roles',
+    permission: 'Permissions',
     profile: 'Profile',
     password: 'Password',
     logout: 'Logout',
@@ -15,7 +15,16 @@ export default {
     theme: 'Theme',
     language: 'Language',
     zh: '中文',
-    en: 'English'
+    en: 'English',
+    weekdays: {
+      mon: 'Mon',
+      tue: 'Tue',
+      wed: 'Wed',
+      thu: 'Thu',
+      fri: 'Fri',
+      sat: 'Sat',
+      sun: 'Sun'
+    }
   },
   login: {
     title: 'Login',
@@ -29,10 +38,35 @@ export default {
     overview: 'Overview',
     workplace: 'Workplace',
     welcome: 'Welcome back',
-    totalUsers: 'Total Users',
-    totalOrders: 'Total Orders',
-    totalSales: 'Total Sales',
-    totalVisits: 'Total Visits'
+    today: 'Today is',
+    wish: 'Have a great day!',
+    weather: {
+      sunny: 'Sunny',
+      location: 'Nanshan, Shenzhen'
+    },
+    compared: 'vs last week',
+    stats: {
+      users: 'Total Users',
+      orders: 'Total Orders',
+      sales: 'Total Sales',
+      visits: 'Total Visits'
+    },
+    charts: {
+      visits: 'Visit Trends',
+      users: 'User Distribution',
+      userDistribution: 'User Distribution',
+      enterprise: 'Enterprise',
+      personal: 'Personal',
+      developer: 'Developer',
+      other: 'Other'
+    },
+    shortcuts: {
+      title: 'Quick Actions',
+      addUser: 'Add User',
+      addArticle: 'New Article',
+      settings: 'Settings',
+      notifications: 'Notifications'
+    }
   },
   content: {
     title: 'Content',

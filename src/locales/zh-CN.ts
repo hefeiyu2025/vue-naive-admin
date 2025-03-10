@@ -15,7 +15,16 @@ export default {
     theme: '主题',
     language: '语言',
     zh: '中文',
-    en: 'English'
+    en: 'English',
+    weekdays: {
+      mon: '周一',
+      tue: '周二',
+      wed: '周三',
+      thu: '周四',
+      fri: '周五',
+      sat: '周六',
+      sun: '周日'
+    }
   },
   login: {
     title: '登录',
@@ -29,10 +38,35 @@ export default {
     overview: '系统概览',
     workplace: '工作台',
     welcome: '欢迎回来',
-    totalUsers: '用户总数',
-    totalOrders: '订单总数',
-    totalSales: '销售额',
-    totalVisits: '访问量'
+    today: '今天是',
+    wish: '祝您工作愉快！',
+    weather: {
+      sunny: '晴',
+      location: '深圳市 南山区'
+    },
+    compared: '较上周',
+    stats: {
+      users: '用户总数',
+      orders: '订单总数',
+      sales: '销售额',
+      visits: '访问量'
+    },
+    charts: {
+      visits: '访问量趋势',
+      users: '用户分布',
+      userDistribution: '用户分布',
+      enterprise: '企业用户',
+      personal: '个人用户',
+      developer: '开发者',
+      other: '其他'
+    },
+    shortcuts: {
+      title: '快捷操作',
+      addUser: '新增用户',
+      addArticle: '发布文章',
+      settings: '系统设置',
+      notifications: '查看通知'
+    }
   },
   content: {
     title: '内容管理',

@@ -5,8 +5,8 @@
       <n-grid :cols="24" :x-gap="16">
         <n-grid-item :span="16">
           <div class="welcome-info">
-            <h2>欢迎回来，{{ userStore.userInfo?.username }}</h2>
-            <p>今天是 {{ today }}，祝您工作愉快！</p>
+            <h2>{{ t('dashboard.welcome') }}，{{ userStore.userInfo?.username }}</h2>
+            <p>{{ t('dashboard.today') }} {{ today }}，{{ t('dashboard.wish') }}</p>
           </div>
         </n-grid-item>
         <n-grid-item :span="8">
@@ -15,8 +15,8 @@
               <partly-sunny-outline />
             </n-icon>
             <div class="weather-text">
-              <h3>晴 28°C</h3>
-              <p>深圳市 南山区</p>
+              <h3>{{ t('dashboard.weather.sunny') }} 28°C</h3>
+              <p>{{ t('dashboard.weather.location') }}</p>
             </div>
           </div>
         </n-grid-item>
@@ -29,7 +29,7 @@
         <n-card :bordered="false">
           <div class="statistics-item">
             <div class="statistics-info">
-              <p class="label">{{ item.title }}</p>
+              <p class="label">{{ t(item.title) }}</p>
               <h3 class="value">{{ item.value }}</h3>
               <div class="trend">
                 <n-icon :color="item.trend > 0 ? '#18a058' : '#d03050'">
@@ -37,7 +37,7 @@
                   <arrow-down-outline v-else />
                 </n-icon>
                 <span>{{ Math.abs(item.trend) }}%</span>
-                <span class="compared">较上周</span>
+                <span class="compared">{{ t('dashboard.compared') }}</span>
               </div>
             </div>
             <div class="statistics-icon">
@@ -53,26 +53,26 @@
     <!-- 图表展示 -->
     <n-grid :cols="24" :x-gap="16" :y-gap="16" class="chart-grid">
       <n-grid-item :span="16">
-        <n-card title="访问量趋势" :bordered="false">
+        <n-card :title="t('dashboard.charts.visits')" :bordered="false">
           <div ref="visitChart" class="chart"></div>
         </n-card>
       </n-grid-item>
       <n-grid-item :span="8">
-        <n-card title="用户分布" :bordered="false">
+        <n-card :title="t('dashboard.charts.users')" :bordered="false">
           <div ref="userChart" class="chart"></div>
         </n-card>
       </n-grid-item>
     </n-grid>
 
     <!-- 快捷操作 -->
-    <n-card title="快捷操作" :bordered="false" class="shortcut-card">
+    <n-card :title="t('dashboard.shortcuts.title')" :bordered="false" class="shortcut-card">
       <n-grid :cols="24" :x-gap="16">
         <n-grid-item :span="6" v-for="item in shortcuts" :key="item.title">
           <div class="shortcut-item" @click="item.onClick">
             <n-icon size="32" :color="item.color">
               <component :is="item.icon" />
             </n-icon>
-            <span>{{ item.title }}</span>
+            <span>{{ t(item.title) }}</span>
           </div>
         </n-grid-item>
       </n-grid>
@@ -84,6 +84,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store'
+import { useI18n } from 'vue-i18n'
 import * as echarts from 'echarts'
 import {
   PartlySunnyOutline,
@@ -101,6 +102,7 @@ import {
 
 const router = useRouter()
 const userStore = useUserStore()
+const { t } = useI18n()
 
 // 今日日期
 const today = new Date().toLocaleDateString('zh-CN', {
@@ -113,28 +115,28 @@ const today = new Date().toLocaleDateString('zh-CN', {
 // 统计数据
 const statistics = [
   {
-    title: '用户总数',
+    title: 'dashboard.stats.users',
     value: '12,321',
     trend: 12.5,
     color: '#7050f2',
     icon: PeopleOutline,
   },
   {
-    title: '订单总数',
+    title: 'dashboard.stats.orders',
     value: '1,234',
     trend: -2.5,
     color: '#2080f0',
     icon: CartOutline,
   },
   {
-    title: '销售额',
+    title: 'dashboard.stats.sales',
     value: '¥123,456',
     trend: 15.2,
     color: '#18a058',
     icon: CashOutline,
   },
   {
-    title: '访问量',
+    title: 'dashboard.stats.visits',
     value: '45,678',
     trend: 5.5,
     color: '#f0a020',
@@ -145,25 +147,25 @@ const statistics = [
 // 快捷操作
 const shortcuts = [
   {
-    title: '新增用户',
+    title: 'dashboard.shortcuts.addUser',
     icon: PersonAddOutline,
     color: '#7050f2',
     onClick: () => router.push('/system/user'),
   },
   {
-    title: '发布文章',
+    title: 'dashboard.shortcuts.addArticle',
     icon: DocumentTextOutline,
     color: '#2080f0',
     onClick: () => router.push('/content/article'),
   },
   {
-    title: '系统设置',
+    title: 'dashboard.shortcuts.settings',
     icon: SettingsOutline,
     color: '#18a058',
     onClick: () => router.push('/system/setting'),
   },
   {
-    title: '查看通知',
+    title: 'dashboard.shortcuts.notifications',
     icon: NotificationsOutline,
     color: '#f0a020',
     onClick: () => router.push('/message/notification'),
@@ -183,14 +185,15 @@ onMounted(() => {
     },
     xAxis: {
       type: 'category',
-      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      data: [t('common.weekdays.mon'), t('common.weekdays.tue'), t('common.weekdays.wed'), 
+             t('common.weekdays.thu'), t('common.weekdays.fri'), t('common.weekdays.sat'), t('common.weekdays.sun')],
     },
     yAxis: {
       type: 'value',
     },
     series: [
       {
-        name: '访问量',
+        name: t('dashboard.charts.visits'),
         type: 'line',
         smooth: true,
         data: [820, 932, 901, 934, 1290, 1330, 1320],
@@ -226,15 +229,15 @@ onMounted(() => {
     },
     series: [
       {
-        name: '用户分布',
+        name: t('dashboard.charts.userDistribution'),
         type: 'pie',
         radius: ['40%', '70%'],
         center: ['40%', '50%'],
         data: [
-          { value: 1048, name: '企业用户' },
-          { value: 735, name: '个人用户' },
-          { value: 580, name: '开发者' },
-          { value: 484, name: '其他' },
+          { value: 1048, name: t('dashboard.charts.enterprise') },
+          { value: 735, name: t('dashboard.charts.personal') },
+          { value: 580, name: t('dashboard.charts.developer') },
+          { value: 484, name: t('dashboard.charts.other') },
         ],
         itemStyle: {
           borderRadius: 10,

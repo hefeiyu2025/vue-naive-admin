@@ -95,7 +95,7 @@ defineComponent({
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .tab-bar {
   padding: 6px 16px 0;
   background-color: var(--card-color);
