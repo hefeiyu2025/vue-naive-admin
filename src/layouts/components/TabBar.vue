@@ -98,6 +98,8 @@ defineComponent({
 .tab-bar {
   padding: 6px 16px 0;
   background-color: var(--card-color);
+  border-bottom: 1px solid var(--divider-color);
+  z-index: 99;
 }
 
 </style> 

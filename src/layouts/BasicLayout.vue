@@ -5,15 +5,17 @@
     <Sidebar v-model:collapsed="collapsed" />
 
     <!-- 主内容区 -->
-    <n-layout>
-      <!-- 顶部导航栏 -->
-      <Header v-model:collapsed="collapsed" />
+    <n-layout class="main-content">
+      <!-- 顶部导航栏 (固定) -->
+      <div class="fixed-header">
+        <Header v-model:collapsed="collapsed" />
+        
+        <!-- 标签页 (固定) -->
+        <TabBar />
+      </div>
 
-      <!-- 标签页 -->
-      <TabBar />
-
-      <!-- 内容区 -->
-      <n-layout-content>
+      <!-- 内容区 (可滚动) -->
+      <n-layout-content class="scrollable-content">
         <div class="content">
           <router-view v-slot="{ Component }">
             <transition name="fade" mode="out-in">
@@ -57,9 +59,30 @@ onMounted(() => {
   height: 100vh;
 }
 
+.main-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.fixed-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--body-color);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  height: calc(100vh - 112px); /* 减去header和tabbar的高度 */
+}
+
 .content {
   padding: 16px;
-  min-height: calc(100vh - 128px);
+  min-height: 100%;
   transition: opacity 0.3s ease;
 }
 

@@ -192,6 +192,8 @@ const toggleCollapse = () => {
   align-items: center;
   gap: 16px;
   transition: opacity 0.3s ease;
+  background-color: var(--body-color);
+  z-index: 100;
 }
 
 .toolbar {
