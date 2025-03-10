@@ -13,7 +13,7 @@
     <!-- Logo -->
     <div class="logo">
       <img src="@/assets/logo.svg" alt="Logo" />
-      <h1 v-if="!collapsed">Vue Naive Admin</h1>
+      <h1 :class="{ 'hidden': collapsed }">Vue Naive Admin</h1>
     </div>
 
     <!-- 菜单 -->
@@ -120,5 +120,14 @@ const handleMenuClick = (key: string) => {
   font-weight: 600;
   white-space: nowrap;
   transition: all 0.3s ease;
+  opacity: 1;
+  width: auto;
+}
+
+.logo h1.hidden {
+  width: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
 }
 </style> 

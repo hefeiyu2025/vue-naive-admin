@@ -1,11 +1,11 @@
 <!-- 基础布局组件 -->
 <template>
-  <div class="layout-container">
+  <n-layout class="layout" has-sider>
     <!-- 侧边栏 -->
     <Sidebar v-model:collapsed="collapsed" />
 
     <!-- 主内容区 -->
-    <div class="main-content">
+    <n-layout class="main-content">
       <!-- 顶部导航栏 (固定) -->
       <div class="fixed-header">
         <Header v-model:collapsed="collapsed" />
@@ -24,8 +24,8 @@
           </router-view>
         </div>
       </div>
-    </div>
-  </div>
+    </n-layout>
+  </n-layout>
 </template>
 
 <script setup lang="ts">
@@ -55,15 +55,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.layout-container {
-  display: flex;
+.layout {
   height: 100vh;
-  width: 100%;
   overflow: hidden;
 }
 
 .main-content {
-  flex: 1;
   display: flex;
   flex-direction: column;
   height: 100vh;
