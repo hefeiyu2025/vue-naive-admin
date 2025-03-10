@@ -1,7 +1,7 @@
 export default {
   common: {
     home: '首页',
-    dashboard: '仪表盘',
+    dashboard: '工作台',
     system: '系统管理',
     user: '用户管理',
     role: '角色管理',
@@ -10,7 +10,7 @@ export default {
     password: '修改密码',
     logout: '退出登录',
     search: '搜索',
-    notification: '通知',
+    notification: '消息通知',
     fullscreen: '全屏',
     theme: '主题',
     language: '语言',
@@ -66,7 +66,8 @@ export default {
       addArticle: '发布文章',
       settings: '系统设置',
       notifications: '查看通知'
-    }
+    },
+    analysis: '分析页'
   },
   content: {
     title: '内容管理',

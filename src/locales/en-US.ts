@@ -1,11 +1,11 @@
 export default {
   common: {
     home: 'Home',
-    dashboard: 'Dashboard',
+    dashboard: 'Workspace',
     system: 'System',
     user: 'Users',
     role: 'Roles',
-    permission: 'Permissions',
+    permission: 'Permission',
     profile: 'Profile',
     password: 'Password',
     logout: 'Logout',
@@ -36,7 +36,7 @@ export default {
   },
   dashboard: {
     overview: 'Overview',
-    workplace: 'Workplace',
+    workplace: 'Workspace',
     welcome: 'Welcome back',
     today: 'Today is',
     wish: 'Have a great day!',
@@ -66,7 +66,8 @@ export default {
       addArticle: 'New Article',
       settings: 'Settings',
       notifications: 'Notifications'
-    }
+    },
+    analysis: 'Analysis'
   },
   content: {
     title: 'Content',

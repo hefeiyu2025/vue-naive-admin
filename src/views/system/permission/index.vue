@@ -220,14 +220,23 @@ const rules = {
 const fetchData = async () => {
   try {
     loading.value = true
-    const { list, total } = await getPermissionList({
+    const response = await getPermissionList({
       page: pagination.value.page,
       pageSize: pagination.value.pageSize,
+      keyword: searchText.value
     })
-    tableData.value = list
-    pagination.value.itemCount = total
+    
+    // 确保响应数据格式正确
+    tableData.value = response.data.list || []
+    pagination.value.itemCount = response.data.total || 0
+    
+    if (!response.data.list || response.data.list.length === 0) {
+      message.warning('未获取到数据')
+    }
   }
   catch (error: any) {
+    tableData.value = []
+    pagination.value.itemCount = 0
     message.error(error.message || '获取数据失败')
   }
   finally {
@@ -289,33 +298,36 @@ const handleDelete = async (row: Permission) => {
 }
 
 // 提交表单
-const handleSubmit = () => {
-  formRef.value?.validate(async (errors) => {
-    if (errors) return
-
-    try {
-      submitting.value = true
-      if (formData.value.id) {
-        await updatePermission(formData.value.id, formData.value)
-        message.success('更新成功')
-      }
-      else {
-        await createPermission(formData.value)
-        message.success('创建成功')
-      }
-      showModal.value = false
-      fetchData()
+const handleSubmit = async () => {
+  if (!formRef.value) return
+  
+  try {
+    await formRef.value.validate()
+    
+    submitting.value = true
+    
+    if (formData.value.id === 0) {
+      // 新增权限
+      const { id, ...createData } = formData.value
+      await createPermission(createData)
+      message.success('新增权限成功')
+    } else {
+      // 编辑权限
+      const { id, ...updateData } = formData.value
+      await updatePermission(id, updateData)
+      message.success('编辑权限成功')
     }
-    catch (error: any) {
-      message.error(error.message || '操作失败')
-    }
-    finally {
-      submitting.value = false
-    }
-  })
+    
+    showModal.value = false
+    fetchData()
+  } catch (error: any) {
+    message.error(error.message || '操作失败')
+  } finally {
+    submitting.value = false
+  }
 }
 
-// 初始化
+// 初始化加载数据
 fetchData()
 </script>
 

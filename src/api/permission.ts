@@ -18,6 +18,7 @@ export interface PermissionListResult {
 export interface PermissionListParams {
   page?: number
   pageSize?: number
+  keyword?: string
 }
 
 export interface MenuPermission {

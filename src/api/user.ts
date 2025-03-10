@@ -21,6 +21,7 @@ export interface UserListResult {
 export interface UserListParams {
   page?: number
   pageSize?: number
+  keyword?: string
 }
 
 export function getUserList(params: UserListParams) {
