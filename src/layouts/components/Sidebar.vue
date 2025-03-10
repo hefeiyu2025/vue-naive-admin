@@ -23,7 +23,6 @@
       :collapsed-width="64"
       :collapsed-icon-size="22"
       :indent="20"
-      :render-icon="renderMenuIcon"
       :options="menuOptions"
       :value="activeKey"
       @update:value="handleMenuClick"
@@ -32,39 +31,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, h } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePermissionStore } from '@/store'
 import { useI18n } from 'vue-i18n'
-import { NIcon } from 'naive-ui'
-import {
-  GridOutline,
-  PersonOutline,
-  PeopleOutline,
-  KeyOutline,
-  SettingsOutline,
-  NotificationsOutline,
-  BriefcaseOutline,
-  AnalyticsOutline,
-} from '@vicons/ionicons5'
 
 const router = useRouter()
 const permissionStore = usePermissionStore()
 const { t } = useI18n()
-
-// 图标映射
-const iconMap = {
-  dashboard: GridOutline,
-  user: PersonOutline,
-  role: PeopleOutline,
-  permission: KeyOutline,
-  setting: SettingsOutline,
-  'notifications-outline': NotificationsOutline,
-  'person-outline': PersonOutline,
-  'i-carbon:password': KeyOutline,
-  'chart-line': AnalyticsOutline,
-  briefcase: BriefcaseOutline,
-}
 
 // 侧边栏折叠状态
 const collapsed = ref(false)
@@ -78,21 +52,6 @@ const handleExpand = () => {
   collapsed.value = false
 }
 
-// 渲染菜单图标
-const renderMenuIcon = (icon: any) => {
-  if (!icon) return () => h('div')
-  
-  // 如果icon是函数，直接返回
-  if (typeof icon === 'function') return icon
-  
-  // 如果icon是字符串，查找映射
-  if (typeof icon === 'string' && iconMap[icon]) {
-    return () => h(NIcon, null, { default: () => h(iconMap[icon]) })
-  }
-  
-  return () => h(NIcon, null, { default: () => h('div') })
-}
-
 // 当前激活的菜单项
 const activeKey = computed(() => {
   return router.currentRoute.value.path
@@ -104,17 +63,14 @@ const menuOptions = computed(() => {
     return []
   }
   
-  // 深拷贝菜单选项，避免修改原始数据
-  const clonedOptions = JSON.parse(JSON.stringify(permissionStore.menuOptions))
-  
-  // 处理国际化和图标
+  // 处理国际化，但保留原始的图标函数
   const processOptions = (options: any[]) => {
     return options.map(option => {
-      const newOption = { ...option }
-      
-      // 处理标签国际化
-      if (typeof option.label === 'string') {
-        newOption.label = t(option.label)
+      // 创建新选项，但不深拷贝，保留函数引用
+      const newOption = { 
+        ...option,
+        // 处理标签国际化
+        label: typeof option.label === 'string' ? t(option.label) : option.label
       }
       
       // 递归处理子菜单
@@ -126,7 +82,7 @@ const menuOptions = computed(() => {
     })
   }
   
-  return processOptions(clonedOptions)
+  return processOptions(permissionStore.menuOptions)
 })
 
 // 处理菜单点击
