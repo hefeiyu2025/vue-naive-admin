@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h, onMounted } from 'vue'
+import { ref, h, onMounted, computed } from 'vue'
 import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline } from '@vicons/ionicons5'
@@ -121,27 +121,36 @@ const pagination = ref({
 const searchText = ref('')
 
 // 权限类型选项
-const typeOptions = [
-  { label: '菜单', value: '菜单' },
-  { label: '按钮', value: '按钮' },
-]
+const typeOptions = computed(() => [
+  { label: t('system.menu.menu'), value: '菜单' },
+  { label: t('system.menu.button'), value: '按钮' },
+])
 
 // 表格列配置
-const columns: DataTableColumns<Permission> = [
+const columns = computed<DataTableColumns<Permission>>(() => [
   {
-    title: '权限名称',
+    title: t('system.permission.name'),
     key: 'name',
   },
   {
-    title: '权限编码',
+    title: t('system.permission.code'),
     key: 'code',
   },
   {
-    title: '权限类型',
+    title: t('system.permission.type'),
     key: 'type',
+    render(row) {
+      return h(
+        'n-tag',
+        {
+          type: row.type === '菜单' ? 'success' : 'warning',
+        },
+        { default: () => row.type === '菜单' ? t('system.menu.menu') : t('system.menu.button') },
+      )
+    },
   },
   {
-    title: '状态',
+    title: t('system.permission.status'),
     key: 'status',
     render(row) {
       return h(
@@ -149,20 +158,20 @@ const columns: DataTableColumns<Permission> = [
         {
           type: row.status ? 'success' : 'error',
         },
-        { default: () => (row.status ? '启用' : '禁用') },
+        { default: () => (row.status ? t('common.enable') : t('common.disable')) },
       )
     },
   },
   {
-    title: '备注',
+    title: t('system.permission.remark'),
     key: 'remark',
   },
   {
-    title: '创建时间',
+    title: t('system.permission.createTime'),
     key: 'createTime',
   },
   {
-    title: '操作',
+    title: t('common.action'),
     key: 'actions',
     width: 200,
     fixed: 'right',
@@ -197,7 +206,7 @@ const columns: DataTableColumns<Permission> = [
       })
     },
   },
-]
+])
 
 // 表单相关
 const showModal = ref(false)
@@ -217,13 +226,13 @@ const formData = ref({
 
 const rules = {
   name: [
-    { required: true, message: '请输入权限名称', trigger: 'blur' },
+    { required: true, message: t('system.permission.nameRequired'), trigger: 'blur' },
   ],
   code: [
-    { required: true, message: '请输入权限编码', trigger: 'blur' },
+    { required: true, message: t('system.permission.codeRequired'), trigger: 'blur' },
   ],
   type: [
-    { required: true, message: '请选择权限类型', trigger: 'change' },
+    { required: true, message: t('system.permission.typeRequired'), trigger: 'change' },
   ],
 }
 
@@ -242,13 +251,13 @@ const fetchData = async () => {
     pagination.value.itemCount = response.data.total || 0
     
     if (!response.data.list || response.data.list.length === 0) {
-      message.warning('未获取到数据')
+      message.warning(t('common.noData'))
     }
   }
   catch (error: any) {
     tableData.value = []
     pagination.value.itemCount = 0
-    message.error(error.message || '获取数据失败')
+    message.error(error.message || t('common.fetchFailed'))
   }
   finally {
     loading.value = false
@@ -276,7 +285,7 @@ const handleReset = () => {
 
 // 新增
 const handleAdd = () => {
-  modalTitle.value = '新增权限'
+  modalTitle.value = t('system.permission.add')
   formData.value = {
     id: 0,
     name: '',
@@ -291,7 +300,7 @@ const handleAdd = () => {
 
 // 编辑
 const handleEdit = (row: Permission) => {
-  modalTitle.value = '编辑权限'
+  modalTitle.value = t('system.permission.edit')
   formData.value = { ...row }
   showModal.value = true
 }
@@ -300,11 +309,11 @@ const handleEdit = (row: Permission) => {
 const handleDelete = async (row: Permission) => {
   try {
     await deletePermission(row.id)
-    message.success('删除成功')
+    message.success(t('common.deleteSuccess'))
     fetchData()
   }
   catch (error: any) {
-    message.error(error.message || '删除失败')
+    message.error(error.message || t('common.deleteFailed'))
   }
 }
 
@@ -321,18 +330,18 @@ const handleSubmit = async () => {
       // 新增权限
       const { id, ...createData } = formData.value
       await createPermission(createData)
-      message.success('新增权限成功')
+      message.success(t('system.permission.createSuccess'))
     } else {
       // 编辑权限
       const { id, ...updateData } = formData.value
       await updatePermission(id, updateData)
-      message.success('编辑权限成功')
+      message.success(t('system.permission.updateSuccess'))
     }
     
     showModal.value = false
     fetchData()
   } catch (error: any) {
-    message.error(error.message || '操作失败')
+    message.error(error.message || t('common.operationFailed'))
   } finally {
     submitting.value = false
   }

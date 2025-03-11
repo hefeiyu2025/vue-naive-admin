@@ -8,20 +8,20 @@
               <template #icon>
                 <n-icon><add-outline /></n-icon>
               </template>
-              新增参数
+              {{ t('system.config.add') }}
             </n-button>
             <n-button @click="fetchData">
               <template #icon>
                 <n-icon><refresh-outline /></n-icon>
               </template>
-              刷新
+              {{ t('common.refresh') }}
             </n-button>
           </n-space>
           <n-space>
             <n-select
               v-model:value="queryParams.type"
               :options="typeOptions"
-              placeholder="参数类型"
+              :placeholder="t('system.config.type')"
               clearable
               style="width: 120px"
               @update:value="handleSearch"
@@ -29,14 +29,14 @@
             <n-select
               v-model:value="queryParams.group"
               :options="groupOptions"
-              placeholder="参数分组"
+              :placeholder="t('system.config.group')"
               clearable
               style="width: 120px"
               @update:value="handleSearch"
             />
             <n-input
               v-model:value="queryParams.keyword"
-              placeholder="请输入参数名称/键名搜索"
+              :placeholder="t('system.config.search')"
               clearable
               @keyup.enter="handleSearch"
             >
@@ -44,8 +44,8 @@
                 <n-icon><search-outline /></n-icon>
               </template>
             </n-input>
-            <n-button @click="handleSearch">搜索</n-button>
-            <n-button @click="handleReset">重置</n-button>
+            <n-button @click="handleSearch">{{ t('common.search') }}</n-button>
+            <n-button @click="handleReset">{{ t('common.reset') }}</n-button>
           </n-space>
         </n-space>
       </template>
@@ -74,50 +74,50 @@
         label-width="80"
         require-mark-placement="right-hanging"
       >
-        <n-form-item label="参数名称" path="name">
-          <n-input v-model:value="formData.name" placeholder="请输入参数名称" />
+        <n-form-item :label="t('system.config.name')" path="name">
+          <n-input v-model:value="formData.name" :placeholder="t('system.config.enterName')" />
         </n-form-item>
-        <n-form-item label="参数键名" path="key">
-          <n-input v-model:value="formData.key" placeholder="请输入参数键名" />
+        <n-form-item :label="t('system.config.key')" path="key">
+          <n-input v-model:value="formData.key" :placeholder="t('system.config.enterKey')" />
         </n-form-item>
-        <n-form-item label="参数键值" path="value">
-          <n-input v-model:value="formData.value" placeholder="请输入参数键值" />
+        <n-form-item :label="t('system.config.value')" path="value">
+          <n-input v-model:value="formData.value" :placeholder="t('system.config.enterValue')" />
         </n-form-item>
-        <n-form-item label="参数类型" path="type">
+        <n-form-item :label="t('system.config.type')" path="type">
           <n-select
             v-model:value="formData.type"
             :options="typeOptions"
-            placeholder="请选择参数类型"
+            :placeholder="t('system.config.selectType')"
           />
         </n-form-item>
-        <n-form-item label="参数分组" path="group">
+        <n-form-item :label="t('system.config.group')" path="group">
           <n-select
             v-model:value="formData.group"
             :options="groupOptions"
-            placeholder="请选择参数分组"
+            :placeholder="t('system.config.selectGroup')"
             filterable
             tag
           />
         </n-form-item>
-        <n-form-item label="是否内置" path="isBuiltin">
+        <n-form-item :label="t('system.config.isBuiltin')" path="isBuiltin">
           <n-switch v-model:value="formData.isBuiltin" :disabled="!!formData.id" />
         </n-form-item>
-        <n-form-item label="状态" path="status">
+        <n-form-item :label="t('system.config.status')" path="status">
           <n-switch v-model:value="formData.status" />
         </n-form-item>
-        <n-form-item label="备注" path="remark">
+        <n-form-item :label="t('system.config.remark')" path="remark">
           <n-input
             v-model:value="formData.remark"
             type="textarea"
-            placeholder="请输入备注"
+            :placeholder="t('system.config.enterRemark')"
           />
         </n-form-item>
       </n-form>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showModal = false">取消</n-button>
+          <n-button @click="showModal = false">{{ t('common.cancel') }}</n-button>
           <n-button type="primary" :loading="submitting" @click="handleSubmit">
-            确定
+            {{ t('common.confirm') }}
           </n-button>
         </n-space>
       </template>
@@ -126,7 +126,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h, onMounted } from 'vue'
+import { ref, h, onMounted, computed } from 'vue'
 import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline, RefreshOutline } from '@vicons/ionicons5'
@@ -138,9 +138,11 @@ import {
   getConfigGroups,
 } from '@/api/config'
 import type { Config } from '@/api/config'
+import { useI18n } from 'vue-i18n'
 
 const message = useMessage()
 const dialog = useDialog()
+const { t } = useI18n()
 
 // 表格数据
 const loading = ref(false)
@@ -161,38 +163,40 @@ const queryParams = ref({
 })
 
 // 参数类型选项
-const typeOptions = [
-  { label: '系统内置', value: '系统内置' },
-  { label: '自定义', value: '自定义' },
-]
-
-// 参数分组选项
-const groupOptions = ref<{ label: string; value: string }[]>([
-  { label: '系统配置', value: '系统配置' },
-  { label: '邮件配置', value: '邮件配置' },
-  { label: '短信配置', value: '短信配置' },
-  { label: '文件配置', value: '文件配置' },
+const typeOptions = computed(() => [
+  { label: t('system.config.systemBuiltin'), value: '系统内置' },
+  { label: t('system.config.custom'), value: '自定义' },
 ])
 
+// 参数分组选项
+const defaultGroupOptions = computed(() => [
+  { label: t('system.config.systemConfig'), value: '系统配置' },
+  { label: t('system.config.emailConfig'), value: '邮件配置' },
+  { label: t('system.config.smsConfig'), value: '短信配置' },
+  { label: t('system.config.fileConfig'), value: '文件配置' },
+])
+
+const groupOptions = ref<{ label: string; value: string }[]>([])
+
 // 表格列配置
-const columns: DataTableColumns<Config> = [
+const columns = computed<DataTableColumns<Config>>(() => [
   {
-    title: '参数名称',
+    title: t('system.config.name'),
     key: 'name',
   },
   {
-    title: '参数键名',
+    title: t('system.config.key'),
     key: 'key',
   },
   {
-    title: '参数键值',
+    title: t('system.config.value'),
     key: 'value',
     ellipsis: {
       tooltip: true,
     },
   },
   {
-    title: '参数类型',
+    title: t('system.config.type'),
     key: 'type',
     render(row) {
       return h(
@@ -200,16 +204,16 @@ const columns: DataTableColumns<Config> = [
         {
           type: row.type === '系统内置' ? 'info' : 'success',
         },
-        { default: () => row.type },
+        { default: () => row.type === '系统内置' ? t('system.config.systemBuiltin') : t('system.config.custom') },
       )
     },
   },
   {
-    title: '参数分组',
+    title: t('system.config.group'),
     key: 'group',
   },
   {
-    title: '状态',
+    title: t('system.config.status'),
     key: 'status',
     render(row) {
       return h(
@@ -217,23 +221,23 @@ const columns: DataTableColumns<Config> = [
         {
           type: row.status ? 'success' : 'error',
         },
-        { default: () => (row.status ? '启用' : '禁用') },
+        { default: () => (row.status ? t('common.enable') : t('common.disable')) },
       )
     },
   },
   {
-    title: '备注',
+    title: t('system.config.remark'),
     key: 'remark',
     ellipsis: {
       tooltip: true,
     },
   },
   {
-    title: '创建时间',
+    title: t('system.config.createTime'),
     key: 'createTime',
   },
   {
-    title: '操作',
+    title: t('common.action'),
     key: 'actions',
     width: 200,
     fixed: 'right',
@@ -252,7 +256,7 @@ const columns: DataTableColumns<Config> = [
               tertiary: true,
               onClick: () => handleEdit(row),
             },
-            { default: () => '编辑' },
+            { default: () => t('common.edit') },
           ),
           h(
             'n-button',
@@ -262,13 +266,13 @@ const columns: DataTableColumns<Config> = [
               tertiary: true,
               onClick: () => handleDelete(row),
             },
-            { default: () => '删除' },
+            { default: () => t('common.delete') },
           ),
         ]
       })
     },
   },
-]
+])
 
 // 表单相关
 const showModal = ref(false)
@@ -290,19 +294,19 @@ const formData = ref<Partial<Config>>({
 
 const rules = {
   name: [
-    { required: true, message: '请输入参数名称', trigger: 'blur' },
+    { required: true, message: t('system.config.nameRequired'), trigger: 'blur' },
   ],
   key: [
-    { required: true, message: '请输入参数键名', trigger: 'blur' },
+    { required: true, message: t('system.config.keyRequired'), trigger: 'blur' },
   ],
   value: [
-    { required: true, message: '请输入参数键值', trigger: 'blur' },
+    { required: true, message: t('system.config.valueRequired'), trigger: 'blur' },
   ],
   type: [
-    { required: true, message: '请选择参数类型', trigger: 'change' },
+    { required: true, message: t('system.config.typeRequired'), trigger: 'change' },
   ],
   group: [
-    { required: true, message: '请选择参数分组', trigger: 'change' },
+    { required: true, message: t('system.config.groupRequired'), trigger: 'change' },
   ],
 }
 
@@ -323,13 +327,13 @@ const fetchData = async () => {
     pagination.value.itemCount = response.data.total || 0
     
     if (!response.data.list || response.data.list.length === 0) {
-      message.warning('未获取到数据')
+      message.warning(t('common.noData'))
     }
   }
   catch (error: any) {
     tableData.value = []
     pagination.value.itemCount = 0
-    message.error(error.message || '获取数据失败')
+    message.error(error.message || t('common.fetchFailed'))
   }
   finally {
     loading.value = false
@@ -345,9 +349,12 @@ const fetchGroups = async () => {
         label: group,
         value: group,
       }))
+    } else {
+      groupOptions.value = defaultGroupOptions.value
     }
   } catch (error) {
     // 使用默认分组选项
+    groupOptions.value = defaultGroupOptions.value
   }
 }
 
@@ -376,7 +383,7 @@ const handleReset = () => {
 
 // 新增参数
 const handleAdd = () => {
-  modalTitle.value = '新增参数'
+  modalTitle.value = t('system.config.add')
   formData.value = {
     id: undefined,
     name: '',
@@ -393,7 +400,7 @@ const handleAdd = () => {
 
 // 编辑参数
 const handleEdit = (row: Config) => {
-  modalTitle.value = '编辑参数'
+  modalTitle.value = t('system.config.edit')
   formData.value = { ...row }
   showModal.value = true
 }
@@ -401,22 +408,22 @@ const handleEdit = (row: Config) => {
 // 删除参数
 const handleDelete = (row: Config) => {
   if (row.isBuiltin) {
-    message.warning('内置参数不可删除')
+    message.warning(t('system.config.builtinCannotDelete'))
     return
   }
   
   dialog.warning({
-    title: '确认删除',
-    content: `确定要删除参数 "${row.name}" 吗？删除后不可恢复！`,
-    positiveText: '确定',
-    negativeText: '取消',
+    title: t('common.confirmDelete'),
+    content: t('system.config.confirmDeleteMsg', { name: row.name }),
+    positiveText: t('common.confirm'),
+    negativeText: t('common.cancel'),
     onPositiveClick: async () => {
       try {
         await deleteConfig(row.id)
-        message.success('删除成功')
+        message.success(t('common.deleteSuccess'))
         fetchData()
       } catch (error: any) {
-        message.error(error.message || '删除失败')
+        message.error(error.message || t('common.deleteFailed'))
       }
     }
   })
@@ -432,16 +439,16 @@ const handleSubmit = () => {
       if (formData.value.id) {
         // 更新
         await updateConfig(formData.value.id, formData.value)
-        message.success('更新成功')
+        message.success(t('common.updateSuccess'))
       } else {
         // 新增
         await createConfig(formData.value)
-        message.success('新增成功')
+        message.success(t('common.createSuccess'))
       }
       showModal.value = false
       fetchData()
     } catch (error: any) {
-      message.error(error.message || (formData.value.id ? '更新失败' : '新增失败'))
+      message.error(error.message || (formData.value.id ? t('common.updateFailed') : t('common.createFailed')))
     } finally {
       submitting.value = false
     }

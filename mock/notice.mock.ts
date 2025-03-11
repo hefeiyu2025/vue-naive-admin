@@ -202,7 +202,7 @@ export default defineMock([
   {
     url: '/api/system/notice/:id',
     method: 'DELETE',
-    body: () => {
+    body: ({ params }) => {
       return {
         code: 0,
         data: null,

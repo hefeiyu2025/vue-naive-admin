@@ -8,13 +8,13 @@
               <template #icon>
                 <n-icon><add-outline /></n-icon>
               </template>
-              新增用户
+              {{ t('system.user.add') }}
             </n-button>
           </n-space>
           <n-space>
             <n-input
               v-model:value="searchText"
-              placeholder="请输入用户名搜索"
+              :placeholder="t('common.searchPlaceholder')"
               clearable
               @keyup.enter="handleSearch"
             >
@@ -22,8 +22,8 @@
                 <n-icon><search-outline /></n-icon>
               </template>
             </n-input>
-            <n-button @click="handleSearch">搜索</n-button>
-            <n-button @click="handleReset">重置</n-button>
+            <n-button @click="handleSearch">{{ t('common.search') }}</n-button>
+            <n-button @click="handleReset">{{ t('common.reset') }}</n-button>
           </n-space>
         </n-space>
       </template>
@@ -52,25 +52,25 @@
         label-width="80"
         require-mark-placement="right-hanging"
       >
-        <n-form-item label="用户名" path="username">
-          <n-input v-model:value="formData.username" placeholder="请输入用户名" />
+        <n-form-item :label="t('system.user.username')" path="username">
+          <n-input v-model:value="formData.username" :placeholder="t('system.user.enterUsername')" />
         </n-form-item>
-        <n-form-item label="角色" path="role">
+        <n-form-item :label="t('system.user.role')" path="role">
           <n-select
             v-model:value="formData.role"
             :options="roleOptions"
-            placeholder="请选择角色"
+            :placeholder="t('system.user.selectRole')"
           />
         </n-form-item>
-        <n-form-item label="状态" path="status">
+        <n-form-item :label="t('system.user.status')" path="status">
           <n-switch v-model:value="formData.status" />
         </n-form-item>
       </n-form>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showModal = false">取消</n-button>
+          <n-button @click="showModal = false">{{ t('common.cancel') }}</n-button>
           <n-button type="primary" :loading="submitting" @click="handleSubmit">
-            确定
+            {{ t('common.confirm') }}
           </n-button>
         </n-space>
       </template>
@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h, onMounted } from 'vue'
+import { ref, h, onMounted, computed } from 'vue'
 import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline } from '@vicons/ionicons5'
@@ -106,17 +106,17 @@ const pagination = ref({
 const searchText = ref('')
 
 // 表格列配置
-const columns: DataTableColumns<User> = [
+const columns = computed<DataTableColumns<User>>(() => [
   {
-    title: '用户名',
+    title: t('system.user.username'),
     key: 'username',
   },
   {
-    title: '角色',
+    title: t('system.user.role'),
     key: 'role',
   },
   {
-    title: '状态',
+    title: t('system.user.status'),
     key: 'status',
     render(row) {
       return h(
@@ -124,12 +124,12 @@ const columns: DataTableColumns<User> = [
         {
           type: row.status ? 'success' : 'error',
         },
-        { default: () => (row.status ? '启用' : '禁用') },
+        { default: () => (row.status ? t('common.enable') : t('common.disable')) },
       )
     },
   },
   {
-    title: '创建时间',
+    title: t('system.user.createTime'),
     key: 'createTime',
   },
   {
@@ -189,13 +189,13 @@ const columns: DataTableColumns<User> = [
       })
     },
   },
-]
+])
 
 // 角色选项
-const roleOptions = [
-  { label: '管理员', value: '管理员' },
-  { label: '普通用户', value: '普通用户' },
-]
+const roleOptions = computed(() => [
+  { label: t('system.user.adminRole'), value: '管理员' },
+  { label: t('system.user.normalRole'), value: '普通用户' },
+])
 
 // 表单相关
 const showModal = ref(false)
@@ -215,10 +215,10 @@ const formData = ref({
 
 const rules = {
   username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { required: true, message: t('system.user.usernameRequired'), trigger: 'blur' },
   ],
   role: [
-    { required: true, message: '请选择角色', trigger: 'change' },
+    { required: true, message: t('system.user.roleRequired'), trigger: 'change' },
   ],
 }
 
@@ -237,13 +237,13 @@ const fetchData = async () => {
     pagination.value.itemCount = response.data.total || 0
     
     if (!response.data.list || response.data.list.length === 0) {
-      message.warning('未获取到数据')
+      message.warning(t('common.noData'))
     }
   }
   catch (error: any) {
     tableData.value = []
     pagination.value.itemCount = 0
-    message.error(error.message || '获取数据失败')
+    message.error(error.message || t('common.fetchFailed'))
   }
   finally {
     loading.value = false
@@ -271,7 +271,7 @@ const handleReset = () => {
 
 // 新增
 const handleAdd = () => {
-  modalTitle.value = '新增用户'
+  modalTitle.value = t('system.user.add')
   formData.value = {
     id: 0,
     username: '',
@@ -291,7 +291,7 @@ const handleEdit = (row: User) => {
     id: row.id,
     username: row.username,
     role: row.role,
-    status: row.status,
+    status: row.status || false,
     createTime: row.createTime || '',
     nickname: row.nickname || '',
     avatar: row.avatar || '',
@@ -303,11 +303,11 @@ const handleEdit = (row: User) => {
 const handleDelete = async (row: User) => {
   try {
     await deleteUser(row.id)
-    message.success('删除成功')
+    message.success(t('common.deleteSuccess'))
     fetchData()
   }
   catch (error: any) {
-    message.error(error.message || '删除失败')
+    message.error(error.message || t('common.deleteFailed'))
   }
 }
 
@@ -335,18 +335,18 @@ const handleSubmit = async () => {
       // 新增用户
       const { id, createTime, ...createData } = formData.value
       await createUser(createData as Omit<User, 'id'>)
-      message.success('新增用户成功')
+      message.success(t('common.createSuccess'))
     } else {
       // 编辑用户
       const { id, ...updateData } = formData.value
       await updateUser(id, updateData)
-      message.success('编辑用户成功')
+      message.success(t('common.updateSuccess'))
     }
     
     showModal.value = false
     fetchData()
   } catch (error: any) {
-    message.error(error.message || '操作失败')
+    message.error(error.message || t('common.operationFailed'))
   } finally {
     submitting.value = false
   }

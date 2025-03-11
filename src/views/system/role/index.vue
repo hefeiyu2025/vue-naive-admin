@@ -8,13 +8,13 @@
               <template #icon>
                 <n-icon><add-outline /></n-icon>
               </template>
-              新增角色
+              {{ t('system.role.add') }}
             </n-button>
           </n-space>
           <n-space>
             <n-input
               v-model:value="searchText"
-              placeholder="请输入角色名称搜索"
+              :placeholder="t('system.role.search')"
               clearable
               @keyup.enter="handleSearch"
             >
@@ -22,8 +22,8 @@
                 <n-icon><search-outline /></n-icon>
               </template>
             </n-input>
-            <n-button @click="handleSearch">搜索</n-button>
-            <n-button @click="handleReset">重置</n-button>
+            <n-button @click="handleSearch">{{ t('common.search') }}</n-button>
+            <n-button @click="handleReset">{{ t('common.reset') }}</n-button>
           </n-space>
         </n-space>
       </template>
@@ -52,28 +52,28 @@
         label-width="80"
         require-mark-placement="right-hanging"
       >
-        <n-form-item label="角色名称" path="name">
-          <n-input v-model:value="formData.name" placeholder="请输入角色名称" />
+        <n-form-item :label="t('system.role.name')" path="name">
+          <n-input v-model:value="formData.name" :placeholder="t('system.role.enterName')" />
         </n-form-item>
-        <n-form-item label="角色编码" path="code">
-          <n-input v-model:value="formData.code" placeholder="请输入角色编码" />
+        <n-form-item :label="t('system.role.code')" path="code">
+          <n-input v-model:value="formData.code" :placeholder="t('system.role.enterCode')" />
         </n-form-item>
-        <n-form-item label="状态" path="status">
+        <n-form-item :label="t('system.role.status')" path="status">
           <n-switch v-model:value="formData.status" />
         </n-form-item>
-        <n-form-item label="备注" path="remark">
+        <n-form-item :label="t('system.role.remark')" path="remark">
           <n-input
             v-model:value="formData.remark"
             type="textarea"
-            placeholder="请输入备注"
+            :placeholder="t('system.role.enterRemark')"
           />
         </n-form-item>
       </n-form>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showModal = false">取消</n-button>
+          <n-button @click="showModal = false">{{ t('common.cancel') }}</n-button>
           <n-button type="primary" :loading="submitting" @click="handleSubmit">
-            确定
+            {{ t('common.confirm') }}
           </n-button>
         </n-space>
       </template>
@@ -82,7 +82,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h, onMounted } from 'vue'
+import { ref, h, onMounted, computed } from 'vue'
 import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline } from '@vicons/ionicons5'
@@ -91,7 +91,7 @@ import type { Role } from '@/api/role'
 import { useI18n } from 'vue-i18n'
 
 const message = useMessage()
-const i18n = useI18n()
+const { t } = useI18n()
 
 // 表格数据
 const loading = ref(false)
@@ -108,17 +108,17 @@ const pagination = ref({
 const searchText = ref('')
 
 // 表格列配置
-const columns: DataTableColumns<Role> = [
+const columns = computed<DataTableColumns<Role>>(() => [
   {
-    title: '角色名称',
+    title: t('system.role.name'),
     key: 'name',
   },
   {
-    title: '角色编码',
+    title: t('system.role.code'),
     key: 'code',
   },
   {
-    title: '状态',
+    title: t('system.role.status'),
     key: 'status',
     render(row) {
       return h(
@@ -126,20 +126,20 @@ const columns: DataTableColumns<Role> = [
         {
           type: row.status ? 'success' : 'error',
         },
-        { default: () => (row.status ? '启用' : '禁用') },
+        { default: () => (row.status ? t('common.enable') : t('common.disable')) },
       )
     },
   },
   {
-    title: '备注',
+    title: t('system.role.remark'),
     key: 'remark',
   },
   {
-    title: '创建时间',
+    title: t('system.role.createTime'),
     key: 'createTime',
   },
   {
-    title: i18n.t('common.action'),
+    title: t('common.action'),
     key: 'actions',
     width: 280,
     fixed: 'right',
@@ -158,7 +158,7 @@ const columns: DataTableColumns<Role> = [
               tertiary: true,
               onClick: () => handleEdit(row),
             },
-            { default: () => i18n.t('common.edit') },
+            { default: () => t('common.edit') },
           ),
           row.status
             ? h(
@@ -169,7 +169,7 @@ const columns: DataTableColumns<Role> = [
                   tertiary: true,
                   onClick: () => handleChangeStatus(row),
                 },
-                { default: () => i18n.t('common.disable') },
+                { default: () => t('common.disable') },
               )
             : h(
                 'n-button',
@@ -179,7 +179,7 @@ const columns: DataTableColumns<Role> = [
                   tertiary: true,
                   onClick: () => handleChangeStatus(row),
                 },
-                { default: () => i18n.t('common.enable') },
+                { default: () => t('common.enable') },
               ),
           h(
             'n-button',
@@ -189,13 +189,13 @@ const columns: DataTableColumns<Role> = [
               tertiary: true,
               onClick: () => handleDelete(row),
             },
-            { default: () => i18n.t('common.delete') },
+            { default: () => t('common.delete') },
           ),
         ]
       })
     },
   },
-]
+])
 
 // 表单相关
 const showModal = ref(false)
@@ -214,10 +214,10 @@ const formData = ref({
 
 const rules = {
   name: [
-    { required: true, message: '请输入角色名称', trigger: 'blur' },
+    { required: true, message: t('system.role.nameRequired'), trigger: 'blur' },
   ],
   code: [
-    { required: true, message: '请输入角色编码', trigger: 'blur' },
+    { required: true, message: t('system.role.codeRequired'), trigger: 'blur' },
   ],
 }
 
@@ -236,13 +236,13 @@ const fetchData = async () => {
     pagination.value.itemCount = response.data.total || 0
     
     if (!response.data.list || response.data.list.length === 0) {
-      message.warning('未获取到数据')
+      message.warning(t('common.noData'))
     }
   }
   catch (error: any) {
     tableData.value = []
     pagination.value.itemCount = 0
-    message.error(error.message || '获取数据失败')
+    message.error(error.message || t('common.fetchFailed'))
   }
   finally {
     loading.value = false
@@ -270,7 +270,7 @@ const handleReset = () => {
 
 // 新增
 const handleAdd = () => {
-  modalTitle.value = '新增角色'
+  modalTitle.value = t('system.role.add')
   formData.value = {
     id: 0,
     name: '',
@@ -284,7 +284,7 @@ const handleAdd = () => {
 
 // 编辑
 const handleEdit = (row: Role) => {
-  modalTitle.value = '编辑角色'
+  modalTitle.value = t('system.role.edit')
   formData.value = { ...row }
   showModal.value = true
 }
@@ -293,11 +293,11 @@ const handleEdit = (row: Role) => {
 const handleDelete = async (row: Role) => {
   try {
     await deleteRole(row.id)
-    message.success('删除成功')
+    message.success(t('common.deleteSuccess'))
     fetchData()
   }
   catch (error: any) {
-    message.error(error.message || '删除失败')
+    message.error(error.message || t('common.deleteFailed'))
   }
 }
 
@@ -314,18 +314,18 @@ const handleSubmit = async () => {
       // 新增角色
       const { id, ...createData } = formData.value
       await createRole(createData)
-      message.success('新增角色成功')
+      message.success(t('system.role.createSuccess'))
     } else {
       // 编辑角色
       const { id, ...updateData } = formData.value
       await updateRole(id, updateData)
-      message.success('编辑角色成功')
+      message.success(t('system.role.updateSuccess'))
     }
     
     showModal.value = false
     fetchData()
   } catch (error: any) {
-    message.error(error.message || '操作失败')
+    message.error(error.message || t('common.operationFailed'))
   } finally {
     submitting.value = false
   }
@@ -335,10 +335,10 @@ const handleSubmit = async () => {
 const handleChangeStatus = async (row: Role) => {
   try {
     await updateRole(row.id, { status: !row.status })
-    message.success(i18n.t('common.updateSuccess'))
+    message.success(t('common.updateSuccess'))
     fetchData()
   } catch (error: any) {
-    message.error(error.message || i18n.t('common.updateFailed'))
+    message.error(error.message || t('common.updateFailed'))
   }
 }
 

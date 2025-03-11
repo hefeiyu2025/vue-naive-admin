@@ -197,14 +197,14 @@ const typeOptions = [
 ]
 
 // 表格列配置
-const columns: DataTableColumns<Menu> = [
+const columns = computed<DataTableColumns<Menu>>(() => [
   {
-    title: '菜单名称',
+    title: t('system.menu.name'),
     key: 'name',
     width: 220,
   },
   {
-    title: '图标',
+    title: t('system.menu.icon'),
     key: 'icon',
     width: 80,
     render(row) {
@@ -214,41 +214,41 @@ const columns: DataTableColumns<Menu> = [
     }
   },
   {
-    title: '排序',
+    title: t('system.menu.orderNum'),
     key: 'orderNum',
     width: 80,
   },
   {
-    title: '权限标识',
+    title: t('system.menu.permission'),
     key: 'permission',
     width: 180,
   },
   {
-    title: '路由路径',
+    title: t('system.menu.path'),
     key: 'path',
     width: 180,
   },
   {
-    title: '组件路径',
+    title: t('system.menu.component'),
     key: 'component',
     width: 180,
   },
   {
-    title: '类型',
+    title: t('system.menu.type'),
     key: 'type',
     width: 80,
     render(row) {
       const typeMap = {
-        '目录': { type: 'info', text: '目录' },
-        '菜单': { type: 'success', text: '菜单' },
-        '按钮': { type: 'warning', text: '按钮' },
+        '目录': { type: 'info', text: t('system.menu.directory') },
+        '菜单': { type: 'success', text: t('system.menu.menu') },
+        '按钮': { type: 'warning', text: t('system.menu.button') },
       }
       const type = typeMap[row.type as keyof typeof typeMap] || { type: 'default', text: row.type }
       return h('n-tag', { type: type.type, size: 'small' }, { default: () => type.text })
     }
   },
   {
-    title: '状态',
+    title: t('system.menu.status'),
     key: 'status',
     width: 80,
     render(row) {
@@ -258,17 +258,17 @@ const columns: DataTableColumns<Menu> = [
           type: row.status ? 'success' : 'error',
           size: 'small',
         },
-        { default: () => (row.status ? '启用' : '禁用') },
+        { default: () => (row.status ? t('common.enable') : t('common.disable')) },
       )
     }
   },
   {
-    title: '创建时间',
+    title: t('system.menu.createTime'),
     key: 'createTime',
     width: 160,
   },
   {
-    title: '操作',
+    title: t('common.action'),
     key: 'actions',
     width: 200,
     fixed: 'right',
@@ -303,7 +303,7 @@ const columns: DataTableColumns<Menu> = [
       })
     },
   },
-]
+])
 
 // 表单相关
 const showModal = ref(false)

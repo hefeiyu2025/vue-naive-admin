@@ -5,30 +5,30 @@
       <div class="login-left-content">
         <img src="@/assets/logo.svg" alt="Logo" class="logo" />
         <h1>Vue Naive Admin</h1>
-        <p>基于 Vue3 + Naive UI 的现代化后台管理系统</p>
+        <p>{{ t('login.description') }}</p>
         <div class="features">
           <div class="feature-item">
             <n-icon size="24" color="#fff">
               <shield-checkmark-outline />
             </n-icon>
-            <span>安全可靠</span>
+            <span>{{ t('login.features.secure') }}</span>
           </div>
           <div class="feature-item">
             <n-icon size="24" color="#fff">
               <flash-outline />
             </n-icon>
-            <span>高效快速</span>
+            <span>{{ t('login.features.fast') }}</span>
           </div>
           <div class="feature-item">
             <n-icon size="24" color="#fff">
               <layers-outline />
             </n-icon>
-            <span>功能丰富</span>
+            <span>{{ t('login.features.rich') }}</span>
           </div>
         </div>
       </div>
       <div class="login-left-footer">
-        <p>© 2024 Vue Naive Admin. All Rights Reserved.</p>
+        <p>{{ t('login.copyright') }}</p>
       </div>
       
       <!-- 主题切换按钮 -->
@@ -56,8 +56,8 @@
     <div class="login-right">
       <div class="login-form-container">
         <div class="login-header">
-          <h2>欢迎登录</h2>
-          <p>请输入您的账号和密码</p>
+          <h2>{{ t('login.welcomeTitle') }}</h2>
+          <p>{{ t('login.welcomeSubtitle') }}</p>
         </div>
         <n-form
           ref="formRef"
@@ -72,7 +72,7 @@
           <n-form-item path="username">
             <n-input
               v-model:value="formData.username"
-              placeholder="用户名"
+              :placeholder="t('login.username')"
               :maxlength="20"
             >
               <template #prefix>
@@ -84,7 +84,7 @@
             <n-input
               v-model:value="formData.password"
               type="password"
-              placeholder="密码"
+              :placeholder="t('login.password')"
               :maxlength="20"
               show-password-on="click"
             >
@@ -95,8 +95,8 @@
           </n-form-item>
           
           <div class="login-options">
-            <n-checkbox>记住我</n-checkbox>
-            <a href="#" class="forgot-password">忘记密码？</a>
+            <n-checkbox>{{ t('login.remember') }}</n-checkbox>
+            <a href="#" class="forgot-password">{{ t('login.forgot') }}</a>
           </div>
         </n-form>
         <div class="login-buttons">
@@ -107,12 +107,12 @@
             :block="true"
             @click="handleSubmit"
           >
-            登录
+            {{ t('login.login') }}
           </n-button>
         </div>
         
         <div class="login-tips">
-          <p>默认用户名：admin，密码：123456</p>
+          <p>{{ t('login.defaultCredentials') }}</p>
         </div>
       </div>
     </div>
@@ -136,6 +136,7 @@ import { useUserStore } from '@/store'
 import { useTabStore } from '@/store/tab'
 import { useThemeStore } from '@/store/theme'
 import type { FormInst } from 'naive-ui'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const route = useRoute()
@@ -143,6 +144,7 @@ const message = useMessage()
 const userStore = useUserStore()
 const tabStore = useTabStore()
 const themeStore = useThemeStore()
+const { t } = useI18n()
 
 const formRef = ref<FormInst | null>(null)
 const loading = ref(false)
@@ -158,10 +160,10 @@ const formData = ref({
 
 const rules = {
   username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { required: true, message: t('login.usernameRequired'), trigger: 'blur' },
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
+    { required: true, message: t('login.passwordRequired'), trigger: 'blur' },
   ],
 }
 
@@ -172,7 +174,7 @@ const handleSubmit = () => {
     try {
       loading.value = true
       await userStore.login(formData.value.username, formData.value.password)
-      message.success('登录成功')
+      message.success(t('login.loginSuccess'))
       // 重置标签页
       tabStore.resetTabs()
       // 延迟跳转，确保token已经保存
@@ -181,7 +183,7 @@ const handleSubmit = () => {
       router.push(redirect || '/')
     }
     catch (error: any) {
-      message.error(error.message || '登录失败')
+      message.error(error.message || t('login.loginFailed'))
     }
     finally {
       loading.value = false
