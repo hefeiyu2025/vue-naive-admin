@@ -203,8 +203,7 @@ export default [
   {
     url: '/api/system/notice/:id',
     method: 'delete',
-    response: (options) => {
-      const id = options.query?.id || '1'
+    response: () => {
       return {
         code: 0,
         data: null,
