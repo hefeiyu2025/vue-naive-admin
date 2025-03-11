@@ -57,10 +57,6 @@ components.d.ts
 .tmp
 .cache
 
-# Husky
-.husky/_/.gitignore
-.husky/_/h
-
 # OS specific
 Thumbs.db
 ehthumbs.db

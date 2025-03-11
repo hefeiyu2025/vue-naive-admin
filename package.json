@@ -8,8 +8,7 @@
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/",
-    "prepare": "husky install"
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@vicons/ionicons5": "^0.13.0",
@@ -23,8 +22,6 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.7.1",
-    "@commitlint/config-conventional": "^19.7.1",
     "@types/node": "^22.13.9",
     "@typescript-eslint/eslint-plugin": "^8.26.0",
     "@typescript-eslint/parser": "^8.26.0",
@@ -33,7 +30,6 @@
     "eslint-config-prettier": "^10.0.2",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-vue": "^10.0.0",
-    "husky": "^9.1.7",
     "prettier": "^3.5.3",
     "sass": "^1.85.1",
     "typescript": "^5.8.2",
