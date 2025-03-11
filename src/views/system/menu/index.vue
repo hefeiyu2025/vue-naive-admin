@@ -162,7 +162,7 @@
 
 <script lang="ts" setup>
 import { ref, h, onMounted, computed } from 'vue'
-import { useMessage, useDialog } from 'naive-ui'
+import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst, TreeOption } from 'naive-ui'
 import { AddOutline, SearchOutline, RefreshOutline, MenuOutline } from '@vicons/ionicons5'
 import {
@@ -173,9 +173,11 @@ import {
   getIconList,
 } from '@/api/menu'
 import type { Menu } from '@/api/menu'
+import { useI18n } from 'vue-i18n'
 
 const message = useMessage()
 const dialog = useDialog()
+const { t } = useI18n()
 
 // 表格数据
 const loading = ref(false)
@@ -268,51 +270,36 @@ const columns: DataTableColumns<Menu> = [
   {
     title: '操作',
     key: 'actions',
-    width: 160,
+    width: 200,
     fixed: 'right',
     render(row) {
-      return h('n-space', null, {
+      return h(NSpace, {
+        justify: 'center',
+        align: 'center',
+        size: 'small'
+      }, {
         default: () => [
           h(
             'n-button',
             {
-              text: true,
-              type: 'primary',
               size: 'small',
-              onClick: (e) => {
-                e.stopPropagation()
-                handleAdd(e, row.id)
-              }
+              type: 'primary',
+              tertiary: true,
+              onClick: () => handleEdit(row),
             },
-            { default: () => '添加' },
+            { default: () => t('common.edit') },
           ),
           h(
             'n-button',
             {
-              text: true,
-              type: 'primary',
               size: 'small',
-              onClick: (e) => {
-                e.stopPropagation()
-                handleEdit(row)
-              }
-            },
-            { default: () => '编辑' },
-          ),
-          h(
-            'n-button',
-            {
-              text: true,
               type: 'error',
-              size: 'small',
-              onClick: (e) => {
-                e.stopPropagation()
-                handleDelete(row)
-              }
+              tertiary: true,
+              onClick: () => handleDelete(row),
             },
-            { default: () => '删除' },
+            { default: () => t('common.delete') },
           ),
-        ],
+        ]
       })
     },
   },

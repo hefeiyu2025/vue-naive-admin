@@ -82,14 +82,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h } from 'vue'
-import { useMessage } from 'naive-ui'
+import { ref, h, onMounted } from 'vue'
+import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline } from '@vicons/ionicons5'
 import { getRoleList, createRole, updateRole, deleteRole } from '@/api/role'
 import type { Role } from '@/api/role'
+import { useI18n } from 'vue-i18n'
 
 const message = useMessage()
+const i18n = useI18n()
 
 // 表格数据
 const loading = ref(false)
@@ -137,30 +139,59 @@ const columns: DataTableColumns<Role> = [
     key: 'createTime',
   },
   {
-    title: '操作',
+    title: i18n.t('common.action'),
     key: 'actions',
+    width: 280,
+    fixed: 'right',
     render(row) {
-      return h('n-space', null, {
+      return h(NSpace, {
+        justify: 'center',
+        align: 'center',
+        size: 'small'
+      }, {
         default: () => [
           h(
             'n-button',
             {
-              text: true,
+              size: 'small',
               type: 'primary',
+              tertiary: true,
               onClick: () => handleEdit(row),
             },
-            { default: () => '编辑' },
+            { default: () => i18n.t('common.edit') },
           ),
+          row.status
+            ? h(
+                'n-button',
+                {
+                  size: 'small',
+                  type: 'warning',
+                  tertiary: true,
+                  onClick: () => handleChangeStatus(row),
+                },
+                { default: () => i18n.t('common.disable') },
+              )
+            : h(
+                'n-button',
+                {
+                  size: 'small',
+                  type: 'success',
+                  tertiary: true,
+                  onClick: () => handleChangeStatus(row),
+                },
+                { default: () => i18n.t('common.enable') },
+              ),
           h(
             'n-button',
             {
-              text: true,
+              size: 'small',
               type: 'error',
+              tertiary: true,
               onClick: () => handleDelete(row),
             },
-            { default: () => '删除' },
+            { default: () => i18n.t('common.delete') },
           ),
-        ],
+        ]
       })
     },
   },
@@ -297,6 +328,17 @@ const handleSubmit = async () => {
     message.error(error.message || '操作失败')
   } finally {
     submitting.value = false
+  }
+}
+
+// 修改状态
+const handleChangeStatus = async (row: Role) => {
+  try {
+    await updateRole(row.id, { status: !row.status })
+    message.success(i18n.t('common.updateSuccess'))
+    fetchData()
+  } catch (error: any) {
+    message.error(error.message || i18n.t('common.updateFailed'))
   }
 }
 

@@ -79,14 +79,17 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h } from 'vue'
-import { useMessage } from 'naive-ui'
+import { ref, h, onMounted } from 'vue'
+import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline } from '@vicons/ionicons5'
 import { getUserList, createUser, updateUser, deleteUser } from '@/api/user'
 import type { User } from '@/api/user'
+import { useI18n } from 'vue-i18n'
 
 const message = useMessage()
+const dialog = useDialog()
+const { t } = useI18n()
 
 // 表格数据
 const loading = ref(false)
@@ -130,30 +133,59 @@ const columns: DataTableColumns<User> = [
     key: 'createTime',
   },
   {
-    title: '操作',
+    title: t('common.action'),
     key: 'actions',
+    width: 280,
+    fixed: 'right',
     render(row) {
-      return h('n-space', null, {
+      return h(NSpace, {
+        justify: 'center',
+        align: 'center',
+        size: 'small'
+      }, {
         default: () => [
           h(
             'n-button',
             {
-              text: true,
+              size: 'small',
               type: 'primary',
+              tertiary: true,
               onClick: () => handleEdit(row),
             },
-            { default: () => '编辑' },
+            { default: () => t('common.edit') },
           ),
+          row.status
+            ? h(
+                'n-button',
+                {
+                  size: 'small',
+                  type: 'warning',
+                  tertiary: true,
+                  onClick: () => handleChangeStatus(row),
+                },
+                { default: () => t('common.disable') },
+              )
+            : h(
+                'n-button',
+                {
+                  size: 'small',
+                  type: 'success',
+                  tertiary: true,
+                  onClick: () => handleChangeStatus(row),
+                },
+                { default: () => t('common.enable') },
+              ),
           h(
             'n-button',
             {
-              text: true,
+              size: 'small',
               type: 'error',
+              tertiary: true,
               onClick: () => handleDelete(row),
             },
-            { default: () => '删除' },
+            { default: () => t('common.delete') },
           ),
-        ],
+        ]
       })
     },
   },
@@ -254,11 +286,13 @@ const handleAdd = () => {
 
 // 编辑
 const handleEdit = (row: User) => {
-  modalTitle.value = '编辑用户'
-  // 确保所有必要的字段都存在
-  formData.value = { 
-    ...row,
-    status: row.status === undefined ? true : row.status,
+  modalTitle.value = t('system.user.edit')
+  formData.value = {
+    id: row.id,
+    username: row.username,
+    role: row.role,
+    status: row.status,
+    createTime: row.createTime || '',
     nickname: row.nickname || '',
     avatar: row.avatar || '',
   }
@@ -274,6 +308,17 @@ const handleDelete = async (row: User) => {
   }
   catch (error: any) {
     message.error(error.message || '删除失败')
+  }
+}
+
+// 修改状态
+const handleChangeStatus = async (row: User) => {
+  try {
+    await updateUser(row.id, { status: !row.status })
+    message.success(t('common.updateSuccess'))
+    fetchData()
+  } catch (error: any) {
+    message.error(error.message || t('common.updateFailed'))
   }
 }
 

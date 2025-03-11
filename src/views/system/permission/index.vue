@@ -89,8 +89,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h } from 'vue'
-import { useMessage } from 'naive-ui'
+import { ref, h, onMounted } from 'vue'
+import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline } from '@vicons/ionicons5'
 import {
@@ -100,8 +100,11 @@ import {
   deletePermission,
 } from '@/api/permission'
 import type { Permission } from '@/api/permission'
+import { useI18n } from 'vue-i18n'
 
 const message = useMessage()
+const dialog = useDialog()
+const { t } = useI18n()
 
 // 表格数据
 const loading = ref(false)
@@ -161,28 +164,36 @@ const columns: DataTableColumns<Permission> = [
   {
     title: '操作',
     key: 'actions',
+    width: 200,
+    fixed: 'right',
     render(row) {
-      return h('n-space', null, {
+      return h(NSpace, {
+        justify: 'center',
+        align: 'center',
+        size: 'small'
+      }, {
         default: () => [
           h(
             'n-button',
             {
-              text: true,
+              size: 'small',
               type: 'primary',
+              tertiary: true,
               onClick: () => handleEdit(row),
             },
-            { default: () => '编辑' },
+            { default: () => t('common.edit') },
           ),
           h(
             'n-button',
             {
-              text: true,
+              size: 'small',
               type: 'error',
+              tertiary: true,
               onClick: () => handleDelete(row),
             },
-            { default: () => '删除' },
+            { default: () => t('common.delete') },
           ),
-        ],
+        ]
       })
     },
   },

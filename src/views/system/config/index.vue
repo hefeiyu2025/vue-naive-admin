@@ -127,7 +127,7 @@
 
 <script lang="ts" setup>
 import { ref, h, onMounted } from 'vue'
-import { useMessage, useDialog } from 'naive-ui'
+import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline, RefreshOutline } from '@vicons/ionicons5'
 import {
@@ -235,14 +235,21 @@ const columns: DataTableColumns<Config> = [
   {
     title: '操作',
     key: 'actions',
+    width: 200,
+    fixed: 'right',
     render(row) {
-      return h('n-space', null, {
+      return h(NSpace, {
+        justify: 'center',
+        align: 'center',
+        size: 'small'
+      }, {
         default: () => [
           h(
             'n-button',
             {
-              text: true,
+              size: 'small',
               type: 'primary',
+              tertiary: true,
               onClick: () => handleEdit(row),
             },
             { default: () => '编辑' },
@@ -250,14 +257,14 @@ const columns: DataTableColumns<Config> = [
           h(
             'n-button',
             {
-              text: true,
+              size: 'small',
               type: 'error',
+              tertiary: true,
               onClick: () => handleDelete(row),
-              disabled: row.isBuiltin, // 内置参数不可删除
             },
             { default: () => '删除' },
           ),
-        ],
+        ]
       })
     },
   },

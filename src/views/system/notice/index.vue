@@ -89,12 +89,11 @@
         </n-form-item>
         <n-form-item :label="t('system.notice.expireTime')" path="expireTime">
           <n-date-picker
-            v-model:formatted-value="formData.expireTimeFormatted"
+            v-model:value="formData.expireTimeValue"
             type="datetime"
             clearable
             :placeholder="t('system.notice.expireTime')"
             style="width: 100%"
-            value-format="yyyy-MM-dd HH:mm:ss"
           />
         </n-form-item>
         <n-form-item :label="t('system.notice.content')" path="content">
@@ -154,7 +153,7 @@
 
 <script lang="ts" setup>
 import { ref, h, onMounted, computed } from 'vue'
-import { useMessage, useDialog } from 'naive-ui'
+import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline, RefreshOutline } from '@vicons/ionicons5'
 import {
@@ -206,154 +205,169 @@ const statusOptions = computed(() => [
 ])
 
 // 表格列配置
-const columns = computed<DataTableColumns<Notice>>(() => [
-  {
-    title: t('system.notice.title'),
-    key: 'title',
-    ellipsis: {
-      tooltip: true,
+const columns = computed<DataTableColumns<Notice>>(() => {
+  return [
+    {
+      title: t('system.notice.title'),
+      key: 'title',
+      width: 200,
+      ellipsis: {
+        tooltip: true,
+      },
+      render(row) {
+        return h(
+          'a',
+          {
+            href: 'javascript:void(0)',
+            onClick: () => handleView(row),
+          },
+          { default: () => row.title },
+        )
+      },
     },
-    render(row) {
-      return h(
-        'a',
-        {
-          href: 'javascript:void(0)',
-          onClick: () => handleView(row),
-        },
-        { default: () => row.title },
-      )
+    {
+      title: t('system.notice.type'),
+      key: 'type',
+      width: 100,
+      render(row) {
+        const typeMap: Record<string, string> = {
+          '通知': 'info',
+          '公告': 'success',
+          '警告': 'warning',
+        }
+        return h(
+          'n-tag',
+          {
+            type: (typeMap[row.type] || 'default') as any,
+          },
+          { default: () => row.type },
+        )
+      },
     },
-  },
-  {
-    title: t('system.notice.type'),
-    key: 'type',
-    render(row) {
-      const typeMap: Record<string, string> = {
-        '通知': 'info',
-        '公告': 'success',
-        '警告': 'warning',
-      }
-      return h(
-        'n-tag',
-        {
-          type: (typeMap[row.type] || 'default') as any,
-        },
-        { default: () => row.type },
-      )
+    {
+      title: t('system.notice.status'),
+      key: 'status',
+      width: 100,
+      render(row) {
+        const statusMap: Record<string, string> = {
+          '草稿': 'default',
+          '已发布': 'success',
+          '已撤回': 'warning',
+        }
+        return h(
+          'n-tag',
+          {
+            type: (statusMap[row.status] || 'default') as any,
+          },
+          { default: () => row.status },
+        )
+      },
     },
-  },
-  {
-    title: t('system.notice.status'),
-    key: 'status',
-    render(row) {
-      const statusMap: Record<string, string> = {
-        '草稿': 'default',
-        '已发布': 'success',
-        '已撤回': 'warning',
-      }
-      return h(
-        'n-tag',
-        {
-          type: (statusMap[row.status] || 'default') as any,
-        },
-        { default: () => row.status },
-      )
+    {
+      title: t('system.notice.isTop'),
+      key: 'isTop',
+      width: 80,
+      render(row) {
+        return row.isTop ? t('common.yes') : t('common.no')
+      },
     },
-  },
-  {
-    title: t('system.notice.isTop'),
-    key: 'isTop',
-    render(row) {
-      return row.isTop ? t('common.yes') : t('common.no')
+    {
+      title: t('system.notice.publishTime'),
+      key: 'publishTime',
+      width: 150,
     },
-  },
-  {
-    title: t('system.notice.publishTime'),
-    key: 'publishTime',
-  },
-  {
-    title: t('system.notice.expireTime'),
-    key: 'expireTime',
-  },
-  {
-    title: t('system.notice.readCount'),
-    key: 'readCount',
-  },
-  {
-    title: t('system.notice.createBy'),
-    key: 'createBy',
-  },
-  {
-    title: t('system.notice.createTime'),
-    key: 'createTime',
-  },
-  {
-    title: t('system.notice.actions'),
-    key: 'actions',
-    fixed: 'right',
-    width: 200,
-    render(row) {
-      return h('n-space', null, {
-        default: () => [
-          h(
-            'n-button',
-            {
-              quaternary: true,
-              type: 'primary',
-              size: 'small',
-              onClick: () => handleView(row),
-            },
-            { default: () => t('system.notice.view') },
-          ),
-          h(
-            'n-button',
-            {
-              quaternary: true,
-              type: 'primary',
-              size: 'small',
-              onClick: () => handleEdit(row),
-            },
-            { default: () => t('common.edit') },
-          ),
-          row.status === '草稿'
-            ? h(
-                'n-button',
-                {
-                  quaternary: true,
-                  type: 'success',
-                  size: 'small',
-                  onClick: () => handlePublish(row),
-                },
-                { default: () => t('system.notice.publish') },
-              )
-            : null,
-          row.status === '已发布'
-            ? h(
-                'n-button',
-                {
-                  quaternary: true,
-                  type: 'warning',
-                  size: 'small',
-                  onClick: () => handleRevoke(row),
-                },
-                { default: () => t('system.notice.revoke') },
-              )
-            : null,
-          h(
-            'n-button',
-            {
-              quaternary: true,
-              type: 'error',
-              size: 'small',
-              onClick: () => handleDelete(row),
-            },
-            { default: () => t('common.delete') },
-          ),
-        ],
-      })
+    {
+      title: t('system.notice.expireTime'),
+      key: 'expireTime',
+      width: 150,
     },
-  },
-])
+    {
+      title: t('system.notice.readCount'),
+      key: 'readCount',
+      width: 100,
+    },
+    {
+      title: t('system.notice.createBy'),
+      key: 'createBy',
+      width: 120,
+    },
+    {
+      title: t('system.notice.createTime'),
+      key: 'createTime',
+      width: 150,
+    },
+    {
+      title: t('system.notice.actions'),
+      key: 'actions',
+      fixed: 'right',
+      width: 260,
+      render(row) {
+        return h(NSpace, {
+          justify: 'center',
+          align: 'center',
+          size: 'small'
+        }, {
+          default: () => [
+            h(
+              'n-button',
+              {
+                tertiary: true,
+                type: 'primary',
+                size: 'small',
+                onClick: () => handleView(row),
+              },
+              { default: () => t('system.notice.view') },
+            ),
+            h(
+              'n-button',
+              {
+                tertiary: true,
+                type: 'primary',
+                size: 'small',
+                onClick: () => handleEdit(row),
+              },
+              { default: () => t('common.edit') },
+            ),
+            row.status === '草稿'
+              ? h(
+                  'n-button',
+                  {
+                    tertiary: true,
+                    type: 'success',
+                    size: 'small',
+                    onClick: () => handlePublish(row),
+                  },
+                  { default: () => t('system.notice.publish') },
+                )
+              : null,
+            row.status === '已发布'
+              ? h(
+                  'n-button',
+                  {
+                    tertiary: true,
+                    type: 'warning',
+                    size: 'small',
+                    onClick: () => handleRevoke(row),
+                  },
+                  { default: () => t('system.notice.revoke') },
+                )
+              : null,
+            h(
+              'n-button',
+              {
+                tertiary: true,
+                type: 'error',
+                size: 'small',
+                onClick: () => handleDelete(row),
+              },
+              { default: () => t('common.delete') },
+            ),
+          ]
+        })
+      },
+    },
+  ]
+})
 
 // 表单相关
 const showModal = ref(false)
@@ -361,7 +375,7 @@ const modalTitle = ref('')
 const formRef = ref<FormInst | null>(null)
 const submitting = ref(false)
 
-const formData = ref<Partial<Notice> & { expireTimeFormatted?: string }>({
+const formData = ref<Partial<Notice> & { expireTimeValue: number | null }>({
   id: undefined,
   title: '',
   content: '',
@@ -369,7 +383,7 @@ const formData = ref<Partial<Notice> & { expireTimeFormatted?: string }>({
   status: '草稿',
   isTop: false,
   expireTime: '',
-  expireTimeFormatted: '',
+  expireTimeValue: null,
 })
 
 const rules = {
@@ -452,18 +466,28 @@ const handleAdd = () => {
     status: '草稿',
     isTop: false,
     expireTime: '',
-    expireTimeFormatted: '',
-  }
+    expireTimeValue: null,
+  } as Partial<Notice> & { expireTimeValue: number | null }
   showModal.value = true
 }
 
 // 编辑公告
 const handleEdit = (row: Notice) => {
   modalTitle.value = t('system.notice.edit')
+  
+  // 如果有过期时间，转换为时间戳
+  let expireTimeValue: number | null = null;
+  if (row.expireTime) {
+    const expireDate = new Date(row.expireTime);
+    if (!isNaN(expireDate.getTime())) {
+      expireTimeValue = expireDate.getTime();
+    }
+  }
+  
   formData.value = { 
     ...row,
-    expireTimeFormatted: row.expireTime
-  }
+    expireTimeValue,
+  } as Partial<Notice> & { expireTimeValue: number | null }
   showModal.value = true
 }
 
@@ -553,8 +577,12 @@ const handleSubmit = () => {
       }
       
       // 只有当设置了过期时间时才添加该字段
-      if (formData.value.expireTimeFormatted && formData.value.expireTimeFormatted.trim() !== '') {
-        submitData.expireTime = formData.value.expireTimeFormatted
+      if (formData.value.expireTimeValue) {
+        // 确保日期格式正确
+        const expireDate = new Date(formData.value.expireTimeValue);
+        if (!isNaN(expireDate.getTime())) {
+          submitData.expireTime = expireDate.toISOString().replace('T', ' ').substring(0, 19);
+        }
       }
       
       console.log('提交数据:', submitData)
@@ -597,8 +625,12 @@ const handleSubmitAndPublish = () => {
       }
       
       // 只有当设置了过期时间时才添加该字段
-      if (formData.value.expireTimeFormatted && formData.value.expireTimeFormatted.trim() !== '') {
-        submitData.expireTime = formData.value.expireTimeFormatted
+      if (formData.value.expireTimeValue) {
+        // 确保日期格式正确
+        const expireDate = new Date(formData.value.expireTimeValue);
+        if (!isNaN(expireDate.getTime())) {
+          submitData.expireTime = expireDate.toISOString().replace('T', ' ').substring(0, 19);
+        }
       }
       
       console.log('提交并发布数据:', submitData)
@@ -659,5 +691,17 @@ onMounted(() => {
 .notice-content {
   line-height: 1.6;
   white-space: pre-wrap;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.action-button {
+  min-width: 60px;
+  margin-bottom: 4px;
 }
 </style> 

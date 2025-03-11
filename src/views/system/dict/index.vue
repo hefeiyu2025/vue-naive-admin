@@ -215,7 +215,7 @@
 
 <script lang="ts" setup>
 import { ref, h, onMounted, computed } from 'vue'
-import { useMessage, useDialog } from 'naive-ui'
+import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline, RefreshOutline, CreateOutline, TrashOutline } from '@vicons/ionicons5'
 import {
@@ -544,38 +544,40 @@ const dataColumns = computed<DataTableColumns<DictData>>(() => [
     ),
   },
   {
-    title: t('system.dict.data.actions'),
+    title: t('common.action'),
     key: 'actions',
-    width: 130,
-    align: 'center',
-    render: (row) => h(
-      'n-space',
-      { justify: 'center', align: 'center' },
-      {
+    width: 200,
+    fixed: 'right',
+    render(row) {
+      return h(NSpace, {
+        justify: 'center',
+        align: 'center',
+        size: 'small'
+      }, {
         default: () => [
           h(
             'n-button',
             {
               size: 'small',
-              quaternary: true,
               type: 'primary',
+              tertiary: true,
               onClick: () => handleEditData(row),
             },
-            { default: () => '编辑' }
+            { default: () => t('common.edit') },
           ),
           h(
             'n-button',
             {
               size: 'small',
-              quaternary: true,
               type: 'error',
+              tertiary: true,
               onClick: () => handleDeleteData(row),
             },
-            { default: () => '删除' }
+            { default: () => t('common.delete') },
           ),
-        ],
-      }
-    ),
+        ]
+      })
+    },
   },
 ])
 

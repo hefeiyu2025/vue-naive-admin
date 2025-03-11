@@ -1,7 +1,7 @@
 export default {
   common: {
     home: 'Home',
-    dashboard: 'Workspace',
+    dashboard: 'Dashboard',
     system: 'System',
     user: 'Users',
     role: 'Roles',
@@ -19,6 +19,11 @@ export default {
     reset: 'Reset',
     confirm: 'Confirm',
     cancel: 'Cancel',
+    edit: 'Edit',
+    delete: 'Delete',
+    action: 'Action',
+    disable: 'Disable',
+    enable: 'Enable',
     noData: 'No Data',
     confirmDelete: 'Confirm Delete',
     deleteSuccess: 'Delete Success',
