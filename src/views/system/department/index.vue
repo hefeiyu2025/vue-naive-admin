@@ -393,7 +393,7 @@ const handleSelectDepartment = (keys: number[]) => {
 }
 
 // 新增部门
-const handleAdd = (e?: MouseEvent, parentId?: number) => {
+const handleAdd = (_e?: MouseEvent, parentId?: number) => {
   modalTitle.value = t('system.department.add')
   // 如果没有指定父部门ID，且当前有选中的部门，则使用选中的部门作为父部门
   const pid = parentId !== undefined ? parentId : 

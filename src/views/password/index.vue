@@ -76,7 +76,7 @@ const rules = {
   confirmPassword: [
     { required: true, message: '请再次输入新密码', trigger: 'blur' },
     {
-      validator: (rule: any, value: string) => {
+      validator: (_rule: any, value: string) => {
         return value === formData.value.newPassword
       },
       message: '两次输入的密码不一致',

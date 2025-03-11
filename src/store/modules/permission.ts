@@ -2,8 +2,6 @@ import { defineStore } from 'pinia'
 import { getAllPermissions } from '@/api/permission'
 import type { MenuPermission } from '@/api/permission'
 import type { RouteRecordRaw } from 'vue-router'
-import type { MenuOption } from 'naive-ui'
-import { renderIcon } from '@/components/icons'
 
 // 自定义菜单选项类型，避免无限递归
 interface CustomMenuOption {

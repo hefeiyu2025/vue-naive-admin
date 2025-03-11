@@ -1,17 +1,23 @@
 import { defineStore } from 'pinia'
-import type { MenuOption } from 'naive-ui'
+import type { MenuOption as NaiveMenuOption } from 'naive-ui'
 import {
   AppsOutline,
   SettingsOutline,
   PeopleOutline,
   DocumentTextOutline,
-  PersonOutline,
 } from '@vicons/ionicons5'
 import { renderIcon } from '@/components/icons'
 
 export interface Breadcrumb {
   title: string
   path: string
+}
+
+// 扩展 naive-ui 的 MenuOption 类型
+interface MenuOption extends Omit<NaiveMenuOption, 'children'> {
+  key: string
+  label: string
+  children?: MenuOption[]
 }
 
 export const useMenuStore = defineStore('menu', {
@@ -91,30 +97,62 @@ export const useMenuStore = defineStore('menu', {
 
   getters: {
     breadcrumbs: (state): Breadcrumb[] => {
-      const breadcrumbs: Breadcrumb[] = []
-      const findBreadcrumb = (options: MenuOption[], path: string) => {
-        for (const option of options) {
-          if (option.key === path) {
-            breadcrumbs.push({
-              title: option.label as string,
-              path: option.key as string,
-            })
-            return true
+      // 简单的迭代方法查找路径
+      const findMenuPath = (menuOptions: MenuOption[], targetKey: string): Breadcrumb[] => {
+        // 先检查第一级菜单
+        for (const menu of menuOptions) {
+          if (menu.key === targetKey) {
+            return [{
+              title: menu.label as string,
+              path: menu.key as string
+            }];
           }
-          if (option.children) {
-            if (findBreadcrumb(option.children, path)) {
-              breadcrumbs.unshift({
-                title: option.label as string,
-                path: option.key as string,
-              })
-              return true
+          
+          // 检查子菜单
+          if (menu.children) {
+            for (const subMenu of menu.children) {
+              if (subMenu.key === targetKey) {
+                return [
+                  {
+                    title: menu.label as string,
+                    path: menu.key as string
+                  },
+                  {
+                    title: subMenu.label as string,
+                    path: subMenu.key as string
+                  }
+                ];
+              }
+              
+              // 检查三级菜单（如果需要更深层次，可以继续添加嵌套循环）
+              if (subMenu.children) {
+                for (const thirdMenu of subMenu.children) {
+                  if (thirdMenu.key === targetKey) {
+                    return [
+                      {
+                        title: menu.label as string,
+                        path: menu.key as string
+                      },
+                      {
+                        title: subMenu.label as string,
+                        path: subMenu.key as string
+                      },
+                      {
+                        title: thirdMenu.label as string,
+                        path: thirdMenu.key as string
+                      }
+                    ];
+                  }
+                }
+              }
             }
           }
         }
-        return false
-      }
-      findBreadcrumb(state.menuOptions, state.activeKey)
-      return breadcrumbs
+        
+        return [];
+      };
+      
+      return findMenuPath(state.menuOptions, state.activeKey);
     },
   },
 

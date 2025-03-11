@@ -79,8 +79,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h, onMounted, computed } from 'vue'
-import { useMessage, useDialog, NSpace } from 'naive-ui'
+import { ref, h, computed } from 'vue'
+import { useMessage, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
 import { AddOutline, SearchOutline } from '@vicons/ionicons5'
 import { getUserList, createUser, updateUser, deleteUser } from '@/api/user'
@@ -88,7 +88,6 @@ import type { User } from '@/api/user'
 import { useI18n } from 'vue-i18n'
 
 const message = useMessage()
-const dialog = useDialog()
 const { t } = useI18n()
 
 // 表格数据

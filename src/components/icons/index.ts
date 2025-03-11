@@ -20,12 +20,7 @@ import {
   BagOutline,
   FolderOpenOutline,
   SettingsSharp,
-  PersonSharp,
   PeopleSharp,
-  KeySharp,
-  MenuSharp,
-  BookSharp,
-  NotificationsSharp,
   AppsOutline,
 } from '@vicons/ionicons5'
 

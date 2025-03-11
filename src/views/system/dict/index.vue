@@ -217,7 +217,7 @@
 import { ref, h, onMounted, computed } from 'vue'
 import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst } from 'naive-ui'
-import { AddOutline, SearchOutline, RefreshOutline, CreateOutline, TrashOutline } from '@vicons/ionicons5'
+import { AddOutline, SearchOutline, RefreshOutline } from '@vicons/ionicons5'
 import {
   getDictTypeList,
   createDictType,

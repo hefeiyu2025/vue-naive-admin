@@ -73,13 +73,11 @@ import {
   deleteNotification,
 } from '@/api/notification'
 import type { Notification } from '@/api/notification'
-import { wsClient } from '@/utils/websocket'
 
 const message = useMessage()
 const router = useRouter()
 const notifications = ref<Notification[]>([])
 const unreadCount = ref(0)
-let timer: number | null = null
 
 // 获取通知列表
 const fetchNotifications = async () => {
@@ -88,7 +86,7 @@ const fetchNotifications = async () => {
       page: 1,
       pageSize: 10,
     })
-    notifications.value = res.data
+    notifications.value = res.data.list
   }
   catch (error: any) {
     message.error(error.message || '获取通知失败')
@@ -187,35 +185,14 @@ const getTypeColor = (type: Notification['type']) => {
   return colorMap[type]
 }
 
-// 处理 WebSocket 消息
-const handleWebSocketMessage = (data: any) => {
-  if (data.type === 'notification') {
-    // 新通知
-    notifications.value.unshift(data.notification)
-    unreadCount.value++
-  }
-  else if (data.type === 'notification_read') {
-    // 通知已读
-    const notification = notifications.value.find(n => n.id === data.notificationId)
-    if (notification) {
-      notification.isRead = true
-      unreadCount.value--
-    }
-  }
-}
-
 // 初始化
 onMounted(() => {
   fetchNotifications()
   fetchUnreadCount()
-  // wsClient.addMessageHandler(handleWebSocketMessage)
-  // wsClient.connect()
 })
 
 // 清理
 onUnmounted(() => {
-  // wsClient.removeMessageHandler(handleWebSocketMessage)
-  // wsClient.disconnect()
 })
 </script>
 

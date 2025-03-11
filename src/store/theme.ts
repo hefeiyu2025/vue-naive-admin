@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { darkTheme } from 'naive-ui'
-import type { GlobalTheme } from 'naive-ui'
 
 const THEME_KEY = 'vue-naive-admin-theme'
 

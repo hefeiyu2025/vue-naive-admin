@@ -44,7 +44,7 @@ const collapsed = ref(false)
 
 // 在组件挂载时添加路由守卫
 onMounted(() => {
-  router.beforeEach((to, from, next) => {
+  router.beforeEach((to, _from, next) => {
     // 如果是登录页，清空标签页
     if (to.path === '/login') {
       tabStore.clearTabs()

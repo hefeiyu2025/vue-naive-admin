@@ -89,7 +89,6 @@ import { useI18n } from 'vue-i18n'
 import {
   MenuOutline,
   SearchOutline,
-  NotificationsOutline,
   ScanOutline,
   ExpandOutline,
   SunnyOutline,

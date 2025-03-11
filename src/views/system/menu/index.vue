@@ -164,7 +164,7 @@
 import { ref, h, onMounted, computed } from 'vue'
 import { useMessage, useDialog, NSpace } from 'naive-ui'
 import type { DataTableColumns, FormInst, TreeOption } from 'naive-ui'
-import { AddOutline, SearchOutline, RefreshOutline, MenuOutline } from '@vicons/ionicons5'
+import { AddOutline, SearchOutline, RefreshOutline } from '@vicons/ionicons5'
 import {
   getMenuTree,
   createMenu,
@@ -336,7 +336,7 @@ const rules = {
   ],
   path: [
     { required: true, message: '请输入路由路径', trigger: 'blur' },
-    { validator: (rule: any, value: string) => {
+    { validator: (_rule: any, value: string) => {
         if (formData.value.type === '目录' || formData.value.type === '菜单') {
           return !!value || new Error('路由路径不能为空')
         }
@@ -345,7 +345,7 @@ const rules = {
     }
   ],
   component: [
-    { validator: (rule: any, value: string) => {
+    { validator: (_rule: any, value: string) => {
         if (formData.value.type === '菜单') {
           return !!value || new Error('组件路径不能为空')
         }
@@ -354,7 +354,7 @@ const rules = {
     }
   ],
   permission: [
-    { validator: (rule: any, value: string) => {
+    { validator: (_rule: any, value: string) => {
         if (formData.value.type === '按钮') {
           return !!value || new Error('权限标识不能为空')
         }
@@ -471,7 +471,7 @@ const handleTypeChange = (type: string) => {
 }
 
 // 新增菜单
-const handleAdd = (e?: MouseEvent, parentId = 0) => {
+const handleAdd = (_e?: MouseEvent, parentId = 0) => {
   modalTitle.value = '新增菜单'
   formData.value = {
     id: undefined,

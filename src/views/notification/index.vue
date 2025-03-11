@@ -81,9 +81,6 @@ import { useRouter } from 'vue-router'
 import {
   CheckmarkCircleOutline,
   TrashOutline,
-  InformationCircleOutline,
-  WarningOutline,
-  CloseCircleOutline,
 } from '@vicons/ionicons5'
 import {
   getNotificationList,
@@ -269,8 +266,8 @@ const fetchNotifications = async () => {
       endTime: dateRange.value?.[1],
     })
   
-    notifications.value = res.data
-    total.value = res.total
+    notifications.value = res.data.list
+    total.value = res.data.total
   }
   catch (error: any) {
     message.error(error.message || '获取通知失败')

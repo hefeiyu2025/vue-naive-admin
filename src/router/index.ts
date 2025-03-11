@@ -35,7 +35,7 @@ const router = createRouter({
 // 白名单路由
 const whiteList = ['/login']
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
   const userStore = useUserStore()
   const permissionStore = usePermissionStore()
 

@@ -1,4 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
+import { NotificationsOutline, PersonOutline } from '@vicons/ionicons5'
+import { renderIcon } from '@/components/icons'
 
 // 不需要权限的基础路由
 export const constantRoutes: RouteRecordRaw[] = [
@@ -43,7 +45,7 @@ export const hiddenRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/notification/index.vue'),
         meta: {
           title: 'common.notification',
-          icon: 'notifications-outline',
+          icon: renderIcon(NotificationsOutline),
           hidden: true,
         },
       },
@@ -53,7 +55,7 @@ export const hiddenRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/profile/index.vue'),
         meta: {
           title: 'common.profile',
-          icon: 'person-outline',
+          icon: renderIcon(PersonOutline),
           hidden: true,
         },
       },
@@ -63,7 +65,7 @@ export const hiddenRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/password/index.vue'),
         meta: {
           title: 'common.password',
-          icon: 'i-carbon:password',
+          icon: () => 'i-carbon:password',
           hidden: true,
         },
       },

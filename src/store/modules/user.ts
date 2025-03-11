@@ -36,7 +36,14 @@ export const useUserStore = defineStore('user', {
         if (result && result.data) {
           const { token, userInfo } = result.data
           this.token = token
-          this.userInfo = userInfo
+          // 确保userInfo包含所有必需的字段
+          this.userInfo = {
+            id: userInfo.id,
+            username: userInfo.username,
+            nickname: userInfo.username, // 使用username作为nickname的默认值
+            avatar: userInfo.avatar,
+            role: userInfo.role
+          }
           localStorage.setItem('token', token)
           
           // 登录成功后立即获取权限菜单
