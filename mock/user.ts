@@ -1,10 +1,10 @@
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { MockMethod } from 'vite-plugin-mock'
 
-export default defineMock([
+export default [
   {
     url: '/api/auth/login',
-    method: 'POST',
-    body: ({ body }) => {
+    method: 'post',
+    response: ({ body }) => {
       const { username, password } = body
       if (username === 'admin' && password === '123456') {
         return {
@@ -30,8 +30,8 @@ export default defineMock([
   },
   {
     url: '/api/auth/logout',
-    method: 'POST',
-    body: () => {
+    method: 'post',
+    response: () => {
       return {
         code: 0,
         data: null,
@@ -41,8 +41,8 @@ export default defineMock([
   },
   {
     url: '/api/user/list',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { page = 1, pageSize = 10 } = query
       const total = 100
       const list = Array.from({ length: pageSize }, (_, index) => {
@@ -67,8 +67,8 @@ export default defineMock([
   },
   {
     url: '/api/user/info',
-    method: 'GET',
-    body: () => {
+    method: 'get',
+    response: () => {
       return {
         code: 0,
         data: {
@@ -87,8 +87,8 @@ export default defineMock([
   },
   {
     url: '/api/user/update',
-    method: 'PUT',
-    body: ({ body }) => {
+    method: 'put',
+    response: ({ body }) => {
       return {
         code: 0,
         data: body,
@@ -98,8 +98,8 @@ export default defineMock([
   },
   {
     url: '/api/user/password',
-    method: 'PUT',
-    body: () => {
+    method: 'put',
+    response: () => {
       return {
         code: 0,
         data: null,
@@ -109,8 +109,8 @@ export default defineMock([
   },
   {
     url: '/api/user/avatar',
-    method: 'POST',
-    body: () => {
+    method: 'post',
+    response: () => {
       return {
         code: 0,
         data: {
@@ -120,4 +120,4 @@ export default defineMock([
       }
     },
   },
-]) 
+] as MockMethod[] 

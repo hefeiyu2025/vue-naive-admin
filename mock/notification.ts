@@ -1,4 +1,4 @@
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { MockMethod } from 'vite-plugin-mock'
 
 const notifications = [
   {
@@ -75,11 +75,11 @@ const notifications = [
   },
 ]
 
-export default defineMock([
+export default [
   {
     url: '/api/notification/list',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { page = 1, pageSize = 10, isRead, category, type, priority, startTime, endTime } = query
       let filteredList = [...notifications]
 
@@ -118,67 +118,78 @@ export default defineMock([
 
       return {
         code: 0,
-        data: list,
-        total: filteredList.length,
+        data: {
+          list,
+          total: filteredList.length,
+        },
+        message: 'ok',
       }
     },
   },
   {
     url: '/api/notification/unread/count',
-    method: 'GET',
-    body: () => {
+    method: 'get',
+    response: () => {
       const count = notifications.filter(item => !item.isRead).length
       return {
         code: 0,
         data: count,
+        message: 'ok',
       }
     },
   },
   {
     url: '/api/notification/:id/read',
-    method: 'PUT',
-    body: ({ params }) => {
-      const notification = notifications.find(item => item.id === params.id)
+    method: 'put',
+    response: (options) => {
+      const id = options.query?.id || '1'
+      const notification = notifications.find(item => item.id === id)
       if (notification) {
         notification.isRead = true
         return {
           code: 0,
+          data: null,
           message: '标记成功',
         }
       }
       return {
         code: 404,
+        data: null,
         message: '通知不存在',
       }
     },
   },
   {
     url: '/api/notification/read/all',
-    method: 'PUT',
-    body: () => {
+    method: 'put',
+    response: () => {
       notifications.forEach(item => item.isRead = true)
       return {
         code: 0,
+        data: null,
         message: '标记成功',
       }
     },
   },
   {
     url: '/api/notification/:id',
-    method: 'DELETE',
-    body: ({ params }) => {
-      const index = notifications.findIndex(item => item.id === params.id)
+    method: 'delete',
+    response: (options) => {
+      const id = options.query?.id || '1'
+      const index = notifications.findIndex(item => item.id === id)
       if (index > -1) {
         notifications.splice(index, 1)
         return {
           code: 0,
+          data: null,
           message: '删除成功',
         }
       }
       return {
         code: 404,
+        data: null,
         message: '通知不存在',
       }
     },
   },
-]) 
+] as MockMethod[] 

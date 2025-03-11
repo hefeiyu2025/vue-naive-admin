@@ -1,4 +1,4 @@
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { MockMethod } from 'vite-plugin-mock'
 
 // 参数配置数据
 const configList = [
@@ -143,11 +143,11 @@ const configGroups = [
   '安全配置',
 ]
 
-export default defineMock([
+export default [
   {
     url: '/api/system/config/list',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { keyword, type, group, page = 1, pageSize = 10 } = query
       let list = [...configList]
       
@@ -188,9 +188,10 @@ export default defineMock([
   },
   {
     url: '/api/system/config/:id',
-    method: 'GET',
-    body: ({ params }) => {
-      const { id } = params
+    method: 'get',
+    response: (options) => {
+      // 直接从 options.query 中获取 id
+      const id = options.query?.id || '1'
       const config = configList.find(item => item.id === Number(id))
       
       if (config) {
@@ -209,13 +210,13 @@ export default defineMock([
   },
   {
     url: '/api/system/config',
-    method: 'POST',
-    body: ({ body }) => {
+    method: 'post',
+    response: (options) => {
       return {
         code: 0,
         data: {
           id: configList.length + 1,
-          ...body,
+          ...options.body,
           createTime: '2024-03-10 12:00:00',
           updateTime: '2024-03-10 12:00:00',
         },
@@ -225,13 +226,15 @@ export default defineMock([
   },
   {
     url: '/api/system/config/:id',
-    method: 'PUT',
-    body: ({ params, body }) => {
+    method: 'put',
+    response: (options) => {
+      // 直接从 options.query 中获取 id
+      const id = options.query?.id || '1'
       return {
         code: 0,
         data: {
-          ...body,
-          id: Number(params.id),
+          ...options.body,
+          id: Number(id),
           updateTime: '2024-03-10 12:00:00',
         },
         message: '更新成功',
@@ -240,15 +243,16 @@ export default defineMock([
   },
   {
     url: '/api/system/config/:id',
-    method: 'DELETE',
-    body: ({ params }) => {
-      const { id } = params
+    method: 'delete',
+    response: (options) => {
+      // 直接从 options.query 中获取 id
+      const id = options.query?.id || '1'
       const config = configList.find(item => item.id === Number(id))
       
       if (config && config.isBuiltin) {
         return {
           code: 1,
-          message: '内置参数不能删除',
+          message: '系统内置参数不能删除',
         }
       }
       
@@ -261,8 +265,8 @@ export default defineMock([
   },
   {
     url: '/api/system/config/groups',
-    method: 'GET',
-    body: () => {
+    method: 'get',
+    response: () => {
       return {
         code: 0,
         data: configGroups,
@@ -270,4 +274,4 @@ export default defineMock([
       }
     },
   },
-]) 
+] as MockMethod[] 

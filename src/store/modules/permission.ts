@@ -52,7 +52,12 @@ export const usePermissionStore = defineStore('permission', {
     async getMenus() {
       try {
         const response = await getAllPermissions()
-        // 确保response是一个数组
+        // 检查 response 是否是一个包含 data 字段的对象
+        if (response && response.data) {
+          this.menus = response.data
+          return response.data
+        }
+        // 如果 response 本身就是数组，也支持
         if (Array.isArray(response)) {
           this.menus = response
           return response

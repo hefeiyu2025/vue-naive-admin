@@ -1,10 +1,10 @@
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { MockMethod } from 'vite-plugin-mock'
 
-export default defineMock([
+export default [
   {
     url: '/api/role/list',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { page = 1, pageSize = 10 } = query
       const total = 10
       const list = Array.from({ length: pageSize }, (_, index) => {
@@ -30,8 +30,8 @@ export default defineMock([
   },
   {
     url: '/api/role/all',
-    method: 'GET',
-    body: () => {
+    method: 'get',
+    response: () => {
       return {
         code: 0,
         data: [
@@ -55,4 +55,4 @@ export default defineMock([
       }
     },
   },
-]) 
+] as MockMethod[] 

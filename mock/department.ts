@@ -1,4 +1,4 @@
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { MockMethod } from 'vite-plugin-mock'
 
 // 生成部门树形结构数据
 const generateDepartmentTree = (keyword?: string) => {
@@ -67,9 +67,9 @@ const generateDepartmentTree = (keyword?: string) => {
           code: 'MARKET',
           parentId: 1,
           path: '1,3',
-          leader: '钱七',
+          leader: '王七',
           phone: '13800138003',
-          email: 'qianqi@example.com',
+          email: 'wangqi@example.com',
           status: true,
           orderNum: 2,
           createTime: '2024-03-01 12:00:00',
@@ -77,13 +77,13 @@ const generateDepartmentTree = (keyword?: string) => {
         },
         {
           id: 4,
-          name: '财务部',
-          code: 'FINANCE',
+          name: '运营部',
+          code: 'OPS',
           parentId: 1,
           path: '1,4',
-          leader: '孙八',
+          leader: '钱八',
           phone: '13800138004',
-          email: 'sunba@example.com',
+          email: 'qianba@example.com',
           status: true,
           orderNum: 3,
           createTime: '2024-03-01 12:00:00',
@@ -93,14 +93,14 @@ const generateDepartmentTree = (keyword?: string) => {
     }
   ]
 
+  // 搜索部门
   if (keyword) {
-    // 简单的搜索实现，实际项目中可能需要更复杂的搜索逻辑
-    const searchDepartments = (depts: any[]) => {
-      return depts.filter(dept => {
-        const match = dept.name.includes(keyword) || dept.code.includes(keyword)
-        if (dept.children && dept.children.length > 0) {
-          dept.children = searchDepartments(dept.children)
-          return match || dept.children.length > 0
+    const searchDepartments = (departmentList: any[]) => {
+      return departmentList.filter(department => {
+        const match = department.name.includes(keyword) || department.code.includes(keyword)
+        if (department.children && department.children.length > 0) {
+          department.children = searchDepartments(department.children)
+          return match || department.children.length > 0
         }
         return match
       })
@@ -111,11 +111,11 @@ const generateDepartmentTree = (keyword?: string) => {
   return departments
 }
 
-export default defineMock([
+export default [
   {
     url: '/api/system/department/tree',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { keyword } = query
       return {
         code: 0,
@@ -126,8 +126,8 @@ export default defineMock([
   },
   {
     url: '/api/system/department/list',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { keyword } = query
       // 这里简化处理，实际项目中可能需要扁平化处理树形结构
       const departments = generateDepartmentTree(keyword)
@@ -143,9 +143,9 @@ export default defineMock([
   },
   {
     url: '/api/system/department/:id',
-    method: 'GET',
-    body: ({ params }) => {
-      const { id } = params
+    method: 'get',
+    response: (options) => {
+      const id = options.query?.id || '1'
       // 简单模拟，实际项目中需要根据ID查找对应部门
       return {
         code: 0,
@@ -169,8 +169,8 @@ export default defineMock([
   },
   {
     url: '/api/system/department',
-    method: 'POST',
-    body: ({ body }) => {
+    method: 'post',
+    response: ({ body }) => {
       return {
         code: 0,
         data: {
@@ -183,30 +183,4 @@ export default defineMock([
       }
     },
   },
-  {
-    url: '/api/system/department/:id',
-    method: 'PUT',
-    body: ({ params, body }) => {
-      return {
-        code: 0,
-        data: {
-          ...body,
-          id: Number(params.id),
-          updateTime: '2024-03-10 12:00:00',
-        },
-        message: '更新成功',
-      }
-    },
-  },
-  {
-    url: '/api/system/department/:id',
-    method: 'DELETE',
-    body: () => {
-      return {
-        code: 0,
-        data: null,
-        message: '删除成功',
-      }
-    },
-  },
-]) 
+] as MockMethod[] 

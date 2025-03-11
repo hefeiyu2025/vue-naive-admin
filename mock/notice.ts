@@ -1,4 +1,4 @@
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { MockMethod } from 'vite-plugin-mock'
 
 // 通知公告数据
 const noticeList = [
@@ -74,11 +74,11 @@ const noticeList = [
   },
 ]
 
-export default defineMock([
+export default [
   {
     url: '/api/system/notice/list',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { keyword, type, status, page = 1, pageSize = 10 } = query
       let list = [...noticeList]
       
@@ -118,9 +118,9 @@ export default defineMock([
   },
   {
     url: '/api/system/notice/:id',
-    method: 'GET',
-    body: ({ params }) => {
-      const { id } = params
+    method: 'get',
+    response: (options) => {
+      const id = options.query?.id || '1'
       const notice = noticeList.find(item => item.id === Number(id))
       
       if (notice) {
@@ -142,8 +142,8 @@ export default defineMock([
   },
   {
     url: '/api/system/notice',
-    method: 'POST',
-    body: ({ body }) => {
+    method: 'post',
+    response: ({ body }) => {
       console.log('创建公告请求数据:', body)
       
       // 处理日期格式
@@ -176,17 +176,18 @@ export default defineMock([
   },
   {
     url: '/api/system/notice/:id',
-    method: 'PUT',
-    body: ({ params, body }) => {
-      console.log('更新公告请求数据:', body)
+    method: 'put',
+    response: (options) => {
+      const id = options.query?.id || '1'
+      console.log('更新公告请求数据:', options.body)
       
       // 处理日期格式
       const now = new Date().toISOString().replace('T', ' ').substring(0, 19)
       
       // 创建更新后的公告对象
       const updatedNotice = {
-        ...body,
-        id: Number(params.id),
+        ...options.body,
+        id: Number(id),
         updateTime: now,
       }
       
@@ -201,8 +202,9 @@ export default defineMock([
   },
   {
     url: '/api/system/notice/:id',
-    method: 'DELETE',
-    body: ({ params }) => {
+    method: 'delete',
+    response: (options) => {
+      const id = options.query?.id || '1'
       return {
         code: 0,
         data: null,
@@ -212,9 +214,9 @@ export default defineMock([
   },
   {
     url: '/api/system/notice/publish/:id',
-    method: 'PUT',
-    body: ({ params }) => {
-      const { id } = params
+    method: 'put',
+    response: (options) => {
+      const id = options.query?.id || '1'
       console.log('发布公告ID:', id)
       
       const notice = noticeList.find(item => item.id === Number(id))
@@ -247,10 +249,10 @@ export default defineMock([
   },
   {
     url: '/api/system/notice/revoke/:id',
-    method: 'PUT',
-    body: ({ params }) => {
-      const { id } = params
-      console.log('撤回公告ID:', id)
+    method: 'put',
+    response: (options) => {
+      const id = options.query?.id || '1'
+      console.log('撤销公告ID:', id)
       
       const notice = noticeList.find(item => item.id === Number(id))
       
@@ -266,17 +268,17 @@ export default defineMock([
       
       const revokedNotice = {
         ...notice,
-        status: '已撤回',
+        status: '已撤销',
         updateTime: now,
       }
       
-      console.log('撤回公告响应数据:', revokedNotice)
+      console.log('撤销公告响应数据:', revokedNotice)
       
       return {
         code: 0,
         data: revokedNotice,
-        message: '撤回成功',
+        message: '撤销成功',
       }
     },
   },
-]) 
+] as MockMethod[] 

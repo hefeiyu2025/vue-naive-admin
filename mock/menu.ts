@@ -1,4 +1,4 @@
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { MockMethod } from 'vite-plugin-mock'
 
 // 生成菜单树形结构数据
 const generateMenuTree = (keyword?: string, type?: string) => {
@@ -217,11 +217,11 @@ const iconList = [
   'checkmark-outline', 'arrow-back-outline', 'arrow-forward-outline', 'refresh-outline',
 ]
 
-export default defineMock([
+export default [
   {
     url: '/api/system/menu/tree',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { keyword, type } = query
       return {
         code: 0,
@@ -232,8 +232,8 @@ export default defineMock([
   },
   {
     url: '/api/system/menu/list',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { keyword, type } = query
       // 这里简化处理，实际项目中可能需要扁平化处理树形结构
       const menus = generateMenuTree(keyword, type)
@@ -249,9 +249,9 @@ export default defineMock([
   },
   {
     url: '/api/system/menu/:id',
-    method: 'GET',
-    body: ({ params }) => {
-      const { id } = params
+    method: 'get',
+    response: (options) => {
+      const id = options.query?.id || '1'
       // 简单模拟，实际项目中需要根据ID查找对应菜单
       return {
         code: 0,
@@ -279,8 +279,8 @@ export default defineMock([
   },
   {
     url: '/api/system/menu',
-    method: 'POST',
-    body: ({ body }) => {
+    method: 'post',
+    response: ({ body }) => {
       return {
         code: 0,
         data: {
@@ -295,13 +295,14 @@ export default defineMock([
   },
   {
     url: '/api/system/menu/:id',
-    method: 'PUT',
-    body: ({ params, body }) => {
+    method: 'put',
+    response: (options) => {
+      const id = options.query?.id || '1'
       return {
         code: 0,
         data: {
-          ...body,
-          id: Number(params.id),
+          ...options.body,
+          id: Number(id),
           updateTime: '2024-03-10 12:00:00',
         },
         message: '更新成功',
@@ -310,8 +311,8 @@ export default defineMock([
   },
   {
     url: '/api/system/menu/:id',
-    method: 'DELETE',
-    body: () => {
+    method: 'delete',
+    response: () => {
       return {
         code: 0,
         data: null,
@@ -321,8 +322,8 @@ export default defineMock([
   },
   {
     url: '/api/system/menu/icons',
-    method: 'GET',
-    body: () => {
+    method: 'get',
+    response: () => {
       return {
         code: 0,
         data: iconList,
@@ -330,4 +331,4 @@ export default defineMock([
       }
     },
   },
-]) 
+] as MockMethod[] 

@@ -1,4 +1,4 @@
-import { defineMock } from 'vite-plugin-mock-dev-server'
+import { MockMethod } from 'vite-plugin-mock'
 
 // 字典类型数据
 const dictTypes = [
@@ -164,12 +164,12 @@ const dictDataMap = {
   ],
 }
 
-export default defineMock([
+export default [
   // 字典类型接口
   {
     url: '/api/system/dict/type/list',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { keyword, page = 1, pageSize = 10 } = query
       let list = [...dictTypes]
       
@@ -198,9 +198,9 @@ export default defineMock([
   },
   {
     url: '/api/system/dict/type/:id',
-    method: 'GET',
-    body: ({ params }) => {
-      const { id } = params
+    method: 'get',
+    response: (options) => {
+      const id = options.query?.id || '1'
       const dictType = dictTypes.find(item => item.id === Number(id))
       
       if (dictType) {
@@ -219,8 +219,8 @@ export default defineMock([
   },
   {
     url: '/api/system/dict/type',
-    method: 'POST',
-    body: ({ body }) => {
+    method: 'post',
+    response: ({ body }) => {
       return {
         code: 0,
         data: {
@@ -235,13 +235,14 @@ export default defineMock([
   },
   {
     url: '/api/system/dict/type/:id',
-    method: 'PUT',
-    body: ({ params, body }) => {
+    method: 'put',
+    response: (options) => {
+      const id = options.query?.id || '1'
       return {
         code: 0,
         data: {
-          ...body,
-          id: Number(params.id),
+          ...options.body,
+          id: Number(id),
           updateTime: '2024-03-10 12:00:00',
         },
         message: '更新成功',
@@ -250,8 +251,8 @@ export default defineMock([
   },
   {
     url: '/api/system/dict/type/:id',
-    method: 'DELETE',
-    body: () => {
+    method: 'delete',
+    response: () => {
       return {
         code: 0,
         data: null,
@@ -263,8 +264,8 @@ export default defineMock([
   // 字典数据接口
   {
     url: '/api/system/dict/data/list',
-    method: 'GET',
-    body: ({ query }) => {
+    method: 'get',
+    response: ({ query }) => {
       const { dictType, keyword, page = 1, pageSize = 10 } = query
       
       if (!dictType || !dictDataMap[dictType]) {
@@ -305,9 +306,9 @@ export default defineMock([
   },
   {
     url: '/api/system/dict/data/:id',
-    method: 'GET',
-    body: ({ params }) => {
-      const { id } = params
+    method: 'get',
+    response: (options) => {
+      const id = options.query?.id || '1'
       const allDictData = Object.values(dictDataMap).flat()
       const dictData = allDictData.find(item => item.id === Number(id))
       
@@ -327,8 +328,8 @@ export default defineMock([
   },
   {
     url: '/api/system/dict/data',
-    method: 'POST',
-    body: ({ body }) => {
+    method: 'post',
+    response: ({ body }) => {
       const { dictType } = body
       const allDictData = Object.values(dictDataMap).flat()
       
@@ -347,13 +348,14 @@ export default defineMock([
   },
   {
     url: '/api/system/dict/data/:id',
-    method: 'PUT',
-    body: ({ params, body }) => {
+    method: 'put',
+    response: (options) => {
+      const id = options.query?.id || '1'
       return {
         code: 0,
         data: {
-          ...body,
-          id: Number(params.id),
+          ...options.body,
+          id: Number(id),
           updateTime: '2024-03-10 12:00:00',
         },
         message: '更新成功',
@@ -362,8 +364,8 @@ export default defineMock([
   },
   {
     url: '/api/system/dict/data/:id',
-    method: 'DELETE',
-    body: () => {
+    method: 'delete',
+    response: () => {
       return {
         code: 0,
         data: null,
@@ -371,4 +373,4 @@ export default defineMock([
       }
     },
   },
-]) 
+] as MockMethod[] 
