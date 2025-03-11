@@ -2,19 +2,8 @@ import { defineStore } from 'pinia'
 import { getAllPermissions } from '@/api/permission'
 import type { MenuPermission } from '@/api/permission'
 import type { RouteRecordRaw } from 'vue-router'
-import { h } from 'vue'
-import { NIcon } from 'naive-ui'
 import type { MenuOption } from 'naive-ui'
-import {
-  GridOutline,
-  PersonOutline,
-  PeopleOutline,
-  KeyOutline,
-  SettingsOutline,
-  NotificationsOutline,
-  BriefcaseOutline,
-  AnalyticsOutline,
-} from '@vicons/ionicons5'
+import { renderIcon } from '@/components/icons'
 
 // 自定义菜单选项类型，避免无限递归
 interface CustomMenuOption {
@@ -32,31 +21,11 @@ interface PermissionState {
   hasInitialized: boolean
 }
 
-// 图标映射
-const iconMap: Record<string, any> = {
-  dashboard: GridOutline,
-  user: PersonOutline,
-  role: PeopleOutline,
-  permission: KeyOutline,
-  setting: SettingsOutline,
-  'notifications-outline': NotificationsOutline,
-  'person-outline': PersonOutline,
-  'i-carbon:password': KeyOutline,
-  'chart-line': AnalyticsOutline,
-  briefcase: BriefcaseOutline,
-}
-
-// 渲染图标
-function renderIcon(icon: string) {
-  if (!icon) return () => h('div')
-  
-  // 直接使用已导入的图标组件
-  if (iconMap[icon]) {
-    return () => h(NIcon, null, { default: () => h(iconMap[icon]) })
+// 扩展 RouteRecordRaw 的 meta 类型
+declare module 'vue-router' {
+  interface RouteMeta {
+    icon?: () => any
   }
-  
-  // 对于未知图标，返回一个空的占位符
-  return () => h(NIcon, null, { default: () => h('div') })
 }
 
 export const usePermissionStore = defineStore('permission', {
@@ -145,14 +114,7 @@ export const usePermissionStore = defineStore('permission', {
           const menuOption: CustomMenuOption = {
             label: (route.meta?.title || route.name || '').toString(),
             key: route.path,
-          }
-          
-          // 添加图标
-          if (route.meta?.icon) {
-            const icon = route.meta.icon as string
-            if (iconMap[icon]) {
-              menuOption.icon = () => h(NIcon, null, { default: () => h(iconMap[icon]) })
-            }
+            icon: route.meta?.icon,
           }
           
           // 处理子菜单
@@ -197,14 +159,7 @@ export const usePermissionStore = defineStore('permission', {
         const menuOption: CustomMenuOption = {
           label: (route.meta?.title || route.name || '').toString(),
           key: path,
-        }
-        
-        // 添加图标
-        if (route.meta?.icon) {
-          const icon = route.meta.icon as string
-          if (iconMap[icon]) {
-            menuOption.icon = () => h(NIcon, null, { default: () => h(iconMap[icon]) })
-          }
+          icon: route.meta?.icon,
         }
         
         // 处理子菜单

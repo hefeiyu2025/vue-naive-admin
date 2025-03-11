@@ -1,18 +1,13 @@
 import { defineStore } from 'pinia'
 import type { MenuOption } from 'naive-ui'
 import {
-  DashboardOutlined,
-  SettingOutlined,
-  TeamOutlined,
-  FileTextOutlined,
-  ProfileOutlined,
-} from '@vicons/antd'
-import { h } from 'vue'
-import { NIcon } from 'naive-ui'
-
-function renderIcon(icon: any) {
-  return () => h(NIcon, null, { default: () => h(icon) })
-}
+  AppsOutline,
+  SettingsOutline,
+  PeopleOutline,
+  DocumentTextOutline,
+  PersonOutline,
+} from '@vicons/ionicons5'
+import { renderIcon } from '@/components/icons'
 
 export interface Breadcrumb {
   title: string
@@ -26,7 +21,7 @@ export const useMenuStore = defineStore('menu', {
       {
         label: 'common.dashboard',
         key: '/dashboard',
-        icon: renderIcon(DashboardOutlined),
+        icon: renderIcon(AppsOutline),
         children: [
           {
             label: 'dashboard.overview',
@@ -41,7 +36,7 @@ export const useMenuStore = defineStore('menu', {
       {
         label: 'common.system',
         key: '/system',
-        icon: renderIcon(SettingOutlined),
+        icon: renderIcon(SettingsOutline),
         children: [
           {
             label: 'common.user',
@@ -60,7 +55,7 @@ export const useMenuStore = defineStore('menu', {
       {
         label: 'common.profile',
         key: '/user',
-        icon: renderIcon(TeamOutlined),
+        icon: renderIcon(PeopleOutline),
         children: [
           {
             label: 'common.profile',
@@ -75,7 +70,7 @@ export const useMenuStore = defineStore('menu', {
       {
         label: 'content.title',
         key: '/content',
-        icon: renderIcon(FileTextOutlined),
+        icon: renderIcon(DocumentTextOutline),
         children: [
           {
             label: 'content.article',
